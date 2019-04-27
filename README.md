@@ -1,2 +1,2 @@
 # blog
-Everything about knowledge(Most for PostgreSQL). 
+Everything about knowledge(Most for PostgreSQL).
