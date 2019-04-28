@@ -235,9 +235,9 @@ max_parallel_workers_per_gather = 6
 max_parallel_workers = 6
 ```
 I got the results like this:
-![pic](./pic/the data of benchmarking with jit on or off.png)
+
+
 you could see the Histogram:
-![pic](./pic/Parallel off with jit.png)
-![pic](./pic/Parallel on with jit.png)
+![Parallel off with jit](/assets/Parallel%20off%20with%20jit.png)![Parallel on with jit](/assets/Parallel%20on%20with%20jit.png)
 Written at the end:
 I have not found the JIT to be more efficient than the close it. May be a problem with my database settings or the method I tested.
