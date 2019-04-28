@@ -10,7 +10,8 @@ OS : CentOS Linux release 7.6.1810 (Core)
 #### installation PostgreSQL 11：
 
 To use the PostgreSQL Yum Repository, follow these steps:
-1.Install the repository RPM:
+
+1. Install the repository RPM:
 ```
 yum install https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-centos11-11-2.noarch.rpm
 ```
@@ -234,9 +235,9 @@ max_parallel_workers_per_gather = 6
 max_parallel_workers = 6
 ```
 I got the results like this:
-![0cf7b2a5a58611762610642d27706f07.png](en-resource://database/657:0)
+![pic](./pic/the data of benchmarking with jit on or off.png)
 you could see the Histogram:
-![c648de8cdf60cc62322e170b45d876b1.png](en-resource://database/659:0)
-![356198df85bf6296f78e0c956ec27c24.png](en-resource://database/661:0)
+![pic](./pic/Parallel off with jit.png)
+![pic](./pic/Parallel on with jit.png)
 Written at the end:
 I have not found the JIT to be more efficient than the close it. May be a problem with my database settings or the method I tested.
