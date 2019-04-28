@@ -235,7 +235,7 @@ max_parallel_workers_per_gather = 6
 max_parallel_workers = 6
 ```
 I got the results like this:
-
+![the data of benchmarking with jit on or off](/assets/the%20data%20of%20benchmarking%20with%20jit%20on%20or%20off_2iitryl1k.png)
 
 you could see the Histogram:
 ![Parallel off with jit](/assets/Parallel%20off%20with%20jit.png)![Parallel on with jit](/assets/Parallel%20on%20with%20jit.png)
