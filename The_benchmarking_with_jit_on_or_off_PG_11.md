@@ -254,3 +254,11 @@ After my study, the process of JIT is as follows:
 ```
 The cost of optimization(step 5) is very high. So the
 JIT is not enabled by default in PG 11. I think there is a long way to go in the JIT.
+
+#### The Results for PG 11 with JIT and 10.5
+I got the results like this:
+![PG 10 tpch](/assets/PG%2010%20tpch.png)
+you could see the Histogram:
+pg 10 compare 11 JIT without parallel:
+![pg 10 compare 11 JIT without parallel](/assets/pg%2010%20compare%2011%20JIT%20without%20parallel.png)
+pg 10 compare 11 JIT wit parallel:
