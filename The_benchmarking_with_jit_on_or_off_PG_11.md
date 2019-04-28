@@ -249,7 +249,7 @@ After my study, the process of JIT is as follows:
 1. Use the clang to compile the c files.
 2. Load the bc when the PostgreSQL Start sevice
 3. SQL query
-4. Check for support
+4. Check for cost
 5. if high cost, do it in standard executor, else do it in the LLVM JIT
 ```
 The cost of optimization(step 5) is very high. So the
