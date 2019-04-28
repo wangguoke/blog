@@ -241,3 +241,9 @@ you could see the Histogram:
 ![Parallel off with jit](/assets/Parallel%20off%20with%20jit.png)![Parallel on with jit](/assets/Parallel%20on%20with%20jit.png)
 Written at the end:
 I have not found the JIT to be more efficient than the close it. May be a problem with my database settings or the method I tested.
+
+
+After my study, the process of JIT is as follows:
+![JIT](/assets/JIT.png)
+The cost of optimization(step 5) is very high. So the
+JIT is not enabled by default in PG 11. I think there is a long way to go in the JIT.
