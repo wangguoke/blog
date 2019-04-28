@@ -244,13 +244,13 @@ I have not found the JIT to be more efficient than the close it. May be a proble
 
 
 After my study, the process of JIT is as follows:
-![JIT](/assets/JIT.png)
+![JIT](/assets/JIT_kf27x0loh.png)
 ```
 1. Use the clang to compile the c files.
 2. Load the bc when the PostgreSQL Start sevice
 3. SQL query
 4. Check for support
-5. if not support, do it in standard, else do it in the LLVM JIT
+5. if high cost, do it in standard executor, else do it in the LLVM JIT
 ```
 The cost of optimization(step 5) is very high. So the
 JIT is not enabled by default in PG 11. I think there is a long way to go in the JIT.
