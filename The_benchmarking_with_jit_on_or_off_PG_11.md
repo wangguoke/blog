@@ -20,18 +20,18 @@ yum install https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_6
 ```
 yum install postgresql11-server
 ```
-3. Setting environment variables
+3. Setting environment variables:
 ```
 export PATH=/usr/pgsql-11/bin/:$PATH
 ```
- 4. installation the database
+ 4. installation the database:
 ```
 su - postgres
 cd /home/postgres/
 mkdir data
 initdb -D data/
 ```
-5. Start service
+5. Start service:
 ```
 pg_ctl -D ../data
 psql
@@ -40,7 +40,7 @@ Type "help" for help.
 
 postgres=#
 ```
-6. the Configuration of postgresql.conf I changed
+6. the Configuration of postgresql.conf I changed:
 ```
 shared_buffers = 4GB
 work_mem = 1GB
@@ -52,11 +52,11 @@ max_wal_size = 4GB
 * * *
 
 #### Get data and tools
-1. Get the tpch from http://www.tpc.org/default.asp
+1. Get the tpch from http://www.tpc.org/default.asp:
 ```
 mkdir tpch; cd tpch
 ```
-2. Unzip and generate Makefile
+2. Unzip and generate Makefile:
 ```
 [postgres@shawnc tpch]$ ls
 tpc-h-tool2.18.0_rc2.zip
@@ -69,7 +69,7 @@ tpch
 [postgres@shawnc tpch]$ cd tpch/dbgen/
 [postgres@shawnc dbgen]$ cp makefile.suite Makefile
 ```
-3. modify the Makefile so that it contains
+3. modify the Makefile so that it contains:
 ```
 ################
 ## CHANGE NAME OF ANSI COMPILER HERE
@@ -84,7 +84,7 @@ DATABASE= ORACLE
 MACHINE = LINUX
 WORKLOAD = TPC
 ```
-4. Generate some tools
+4. Generate some tools:
 ```
 [postgres@shawnc dbgen]$ make
 gcc -g -DDBNAME=\"dss\" -DLINUX -DORACLE -DTPCH -DRNG_TEST -D_FILE_OFFSET_BITS=64    -c -o build.o build.c
@@ -99,12 +99,12 @@ bm_utils.o qgen.o rnd.o varsub.o text.o bcd2.o permute.o speed_seed.o rng64.o -l
 TPC-H Population Generator (Version 2.18.0)
 Copyright Transaction Processing Performance Council 1994 - 2010
 ```
-6. Which creates a bunch of .tbl files in Oracle-like CSV format
+6. Which creates a bunch of .tbl files in Oracle-like CSV format:
 ```
 [postgres@shawnc dbgen]$ ls *.tbl
 customer.tbl  lineitem.tbl  nation.tbl  orders.tbl  partsupp.tbl  part.tbl  region.tbl  supplier.tbl
 ```
-7. To convert them to a CSV format compatible with PostgreSQL, do this
+7. To convert them to a CSV format compatible with PostgreSQL, do this:
 ```
 [postgres@shawnc dbgen]$ for i in `ls *.tbl`; do sed 's/|$//' $i > ${i/tbl/csv}; echo $i; done;
 customer.tbl
@@ -119,7 +119,7 @@ supplier.tbl
 [postgres@shawnc dbgen]$ ls *.csv
 customer.csv  lineitem.csv  nation.csv  orders.csv  part.csv  partsupp.csv  region.csv  supplier.csv
 ```
-8. Move these data to the 'dss/data' directory or somewhere else, and create a symlink to /tmp/dss-data.
+8. Move these data to the 'dss/data' directory or somewhere else, and create a symlink to /tmp/dss-data:
 ```
 [postgres@shawnc dbgen]$ mkdir -p dss/data
 [postgres@shawnc dbgen]$ mv *.csv dss/data/
@@ -136,7 +136,7 @@ lrwxrwxrwx. 1 postgres postgres 40 Apr 26 23:07 dss-data -> /home/postgres/tpch/
 #### Get the pg_tpch
 This repository of pg_tpch contains a simple implementation that runs a TPC-H-like benchmark with a PostgreSQL database. It builds on the official TPC-H benchmark available at http://tpc.org/tpch/default.asp (uses just the dbgen a qgen parts).
 
-1. Git the repository
+1. Get the repository:
 ```
 [postgres@shawnc tpch]$ git clone https://github.com/tvondra/pg_tpch.git
 Cloning into 'pg_tpch'...
@@ -144,7 +144,7 @@ remote: Enumerating objects: 47, done.
 remote: Total 47 (delta 0), reused 0 (delta 0), pack-reused 47
 Unpacking objects: 100% (47/47), done.
 ```
-2. Adding some tools for pg_tpch
+2. Adding some tools for pg_tpch:
 ```
 [postgres@shawnc tpch]$ cd pg_tpch/
 [postgres@shawnc pg_tpch]$ cp ../tpch/dbgen/dbgen ./
@@ -152,11 +152,11 @@ Unpacking objects: 100% (47/47), done.
 [postgres@shawnc pg_tpch]$ cp ../tpch/dbgen/dists.dss ./
 [postgres@shawnc pg_tpch]$ 
 ```
-3. Generating directory dss/queries
+3. Generating directory dss/queries:
 ```
 [postgres@shawnc pg_tpch]$ mkdir dss/queries
 ```
-4. modified queries in the 'dss/templates' directory 
+4. modified queries in the 'dss/templates' directory :
 ```
 for q in `seq 1 22`
 do
@@ -245,5 +245,12 @@ I have not found the JIT to be more efficient than the close it. May be a proble
 
 After my study, the process of JIT is as follows:
 ![JIT](/assets/JIT.png)
+```
+1. Use the clang to compile the c files.
+2. Load the bc when the PostgreSQL Start sevice
+3. SQL query
+4. Check for support
+5. if not support, do it in standard, else do it in the LLVM JIT
+```
 The cost of optimization(step 5) is very high. So the
 JIT is not enabled by default in PG 11. I think there is a long way to go in the JIT.
