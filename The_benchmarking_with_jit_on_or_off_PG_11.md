@@ -291,7 +291,7 @@ I got the results like this:
 you could see the Histogram:
 1. Parallel off with JIT on or off in PostgreSQL 11, JIt on is 36.35% higher than off performance with Parallel off:
 ![Parallel off with JIT on or off in PostgreSQL 11](/assets/Parallel%20off%20with%20JIT%20on%20or%20off%20in%20PostgreSQL%2011.png)
-2. Parallel on with JIT on or off in PostgreSQL 11, JIt on is 8.59% lower than off performance with Parallel off:
+2. Parallel on with JIT on or off in PostgreSQL 11, JIt on is 8.59% lower than off performance with Parallel on:
 ![Parallel on with JIT on or off in PostgreSQL 11](/assets/Parallel%20on%20with%20JIT%20on%20or%20off%20in%20PostgreSQL%2011.png)
 3. JIT on or off in PostgreSQL 11 and in PostgreSQL 10 with Parallel off, JIt on in PostgreSQL 11 is 51.02% higher than off in PostgreSQL 10 performance with Parallel off:
 ![JIT on or off in PostgreSQL 11 and in PostgreSQL 10 with Parallel off](/assets/JIT%20on%20or%20off%20in%20PostgreSQL%2011%20and%20in%20PostgreSQL%2010%20with%20Parallel%20off.png)
