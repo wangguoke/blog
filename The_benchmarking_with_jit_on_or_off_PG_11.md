@@ -262,3 +262,4 @@ you could see the Histogram:
 pg 10 compare 11 JIT without parallel:
 ![pg 10 compare 11 JIT without parallel](/assets/pg%2010%20compare%2011%20JIT%20without%20parallel.png)
 pg 10 compare 11 JIT wit parallel:
+![pg 10 compare 11 JIT with parallel](/assets/pg%2010%20compare%2011%20JIT%20with%20parallel.png)
