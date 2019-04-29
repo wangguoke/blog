@@ -1,23 +1,23 @@
 Recently, I am learning JIT in PostgreSQL 11. I found that the
 JIT is not enabled by default in PG 11. I guess there are some
 issues.So I completed the benchmark test in 6 cases.
-1. Close the JIT and Parallel in postgresql.conf in PostgreSQL 11;
-2. Open the JIT and CLose Parallel in postgresql.conf in PostgreSQL 11;
-3. Close the JIT and Open Parallel in postgresql.conf in PostgreSQL 11;
-4. Open the JIT and Parallel in postgresql.conf in PostgreSQL 11;
-5. Close Parallel in postgresql.conf in PostgreSQL 10;
-6. Close Parallel in postgresql.conf in PostgreSQL 10.
+* Close the JIT and Parallel in postgresql.conf in PostgreSQL 11;
+* Open the JIT and CLose Parallel in postgresql.conf in PostgreSQL 11;
+* Close the JIT and Open Parallel in postgresql.conf in PostgreSQL 11;
+* Open the JIT and Parallel in postgresql.conf in PostgreSQL 11;
+* Close Parallel in postgresql.conf in PostgreSQL 10;
+* Open Parallel in postgresql.conf in PostgreSQL 10.
 ### The following is my operation process:
 #### Hardware Configuration：
-CPU : i5 8400
-Memory : 16G DDR4
-Disk : Inter SSD 1T
-OS : CentOS Linux release 7.6.1810 (Core)
-#### installation PostgreSQL 11：
+* CPU : i5 8400
+* Memory : 16G DDR4
+* Disk : Inter SSD 1T
+* OS : CentOS Linux release 7.6.1810 (Core)
+#### Installation PostgreSQL 11 and 10：
 
 To use the PostgreSQL Yum Repository, follow these steps:
 
-1. Install the PostgreSQL by source code:
+1. Install the PostgreSQL 11 by source code:
 ```
 git clone -b REL_11_STABLE git://git.postgresql.org/git/postgresql.git
 ```
@@ -61,6 +61,25 @@ max_wal_size = 40GB
 random_page_cost = 1.1
 max_worker_processes = 32
 max_parallel_maintenance_workers = 2
+max_parallel_workers_per_gather = 6
+max_parallel_workers = 0
+```
+7. Install the PostgreSQL 10 and the Configuration of postgresql.conf I changed:
+```
+./configure --prefix=/home/postgres/pgdb10 --with-openssl --with-libxml --with-libxslt --with-llvm
+make -j6; make install
+cd contrib
+make -j6; make install
+
+shared_buffers = 4GB
+temp_buffers = 64MB
+work_mem = 32MB
+maintenance_work_mem = 1GB
+wal_level = minimal
+max_wal_senders = 0
+max_wal_size = 40GB
+random_page_cost = 1.1
+max_worker_processes = 32
 max_parallel_workers_per_gather = 6
 max_parallel_workers = 0
 ```
@@ -259,15 +278,13 @@ max_parallel_workers = 6
 5. Close Parallel in postgresql.conf in PostgreSQL 10:
 ```
 max_worker_processes = 32
-max_parallel_maintenance_workers = 2
 max_parallel_workers_per_gather = 6
 max_parallel_workers = 0
 ```
 
-6. Close Parallel in postgresql.conf in PostgreSQL 10:
+6. Open Parallel in postgresql.conf in PostgreSQL 10:
 ```
 max_worker_processes = 32
-max_parallel_maintenance_workers = 2
 max_parallel_workers_per_gather = 6
 max_parallel_workers = 6
 ```
@@ -296,4 +313,4 @@ After my study, the process of JIT is as follows:
 4. Check for cost
 5. if high cost, do it in standard executor, else do it in the LLVM JIT
 ```
-The cost of optimization(step 5) is very high in Parallel.
+i think the cost of optimization(step 5) is very high in Parallel.
