@@ -1,6 +1,12 @@
 Recently, I am learning JIT in PostgreSQL 11. I found that the
-JIT is not enabled by default in PG 11. I guess there is some
-issues. So I had done the benchmarking with JIT on or off.
+JIT is not enabled by default in PG 11. I guess there are some
+issues.So I completed the benchmark test in 6 cases.
+1. Close the JIT and Parallel in postgresql.conf in PostgreSQL 11;
+2. Open the JIT and CLose Parallel in postgresql.conf in PostgreSQL 11;
+3. Close the JIT and Open Parallel in postgresql.conf in PostgreSQL 11;
+4. Open the JIT and Parallel in postgresql.conf in PostgreSQL 11;
+5. Close Parallel in postgresql.conf in PostgreSQL 10;
+6. Close Parallel in postgresql.conf in PostgreSQL 10.
 ### The following is my operation process:
 #### Hardware Configuration：
 CPU : i5 8400
@@ -11,18 +17,21 @@ OS : CentOS Linux release 7.6.1810 (Core)
 
 To use the PostgreSQL Yum Repository, follow these steps:
 
-1. Install the repository RPM:
+1. Install the PostgreSQL by source code:
 ```
-yum install https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-centos11-11-2.noarch.rpm
+git clone -b REL_11_STABLE git://git.postgresql.org/git/postgresql.git
 ```
-2. Optionally install the server packages:
+2. Compiled the database:
 
 ```
-yum install postgresql11-server
+./configure --prefix=/home/postgres/pg11JIT --with-openssl --with-libxml --with-libxslt --with-llvm
+make -j6; make install
+cd contrib
+make -j6; make install
 ```
 3. Setting environment variables:
 ```
-export PATH=/usr/pgsql-11/bin/:$PATH
+export PATH=//home/postgres/pg11JIT/bin/:$PATH
 ```
  4. installation the database:
 ```
@@ -43,9 +52,17 @@ postgres=#
 6. the Configuration of postgresql.conf I changed:
 ```
 shared_buffers = 4GB
-work_mem = 1GB
+temp_buffers = 64MB
+work_mem = 32MB
 maintenance_work_mem = 1GB
-max_wal_size = 4GB
+wal_level = minimal
+max_wal_senders = 0
+max_wal_size = 40GB
+random_page_cost = 1.1
+max_worker_processes = 32
+max_parallel_maintenance_workers = 2
+max_parallel_workers_per_gather = 6
+max_parallel_workers = 0
 ```
 
 
@@ -190,58 +207,85 @@ php process.php ./results output.csv
 ```
 #### The Results
 
-1. Close the JIT and Parallel in postgresql.conf
+1. Close the JIT and Parallel in postgresql.conf in PostgreSQL 11:
 ```
 set jit=off;
 set jit_above_cost=0;
 set jit_inline_above_cost=0;
 set jit_optimize_above_cost=0;
 
-max_parallel_maintenance_workers = 0
-max_parallel_workers_per_gather = 0
+max_worker_processes = 32
+max_parallel_maintenance_workers = 2
+max_parallel_workers_per_gather = 6
 max_parallel_workers = 0
 ```
-2. Open the JIT and CLose Parallel in postgresql.conf
+2. Open the JIT and CLose Parallel in postgresql.conf in PostgreSQL 11:
 ```
 set jit=on;
 set jit_above_cost=0;
 set jit_inline_above_cost=0;
 set jit_optimize_above_cost=0;
 
-max_parallel_maintenance_workers = 0
-max_parallel_workers_per_gather = 0
+max_worker_processes = 32
+max_parallel_maintenance_workers = 2
+max_parallel_workers_per_gather = 6
 max_parallel_workers = 0
 ```
-3. Close the JIT and Open Parallel in postgresql.conf
+3. Close the JIT and Open Parallel in postgresql.conf in PostgreSQL 11:
 ```
 set jit=off;
 set jit_above_cost=0;
 set jit_inline_above_cost=0;
 set jit_optimize_above_cost=0;
 
-max_parallel_maintenance_workers = 6
+max_worker_processes = 32
+max_parallel_maintenance_workers = 2
 max_parallel_workers_per_gather = 6
 max_parallel_workers = 6
 ```
-4. Open the JIT and Parallel in postgresql.conf
+4. Open the JIT and Parallel in postgresql.conf in PostgreSQL 11:
 ```
 set jit=on;
 set jit_above_cost=0;
 set jit_inline_above_cost=0;
 set jit_optimize_above_cost=0;
 
-max_parallel_maintenance_workers = 6
+max_worker_processes = 32
+max_parallel_maintenance_workers = 2
+max_parallel_workers_per_gather = 6
+max_parallel_workers = 6
+```
+
+5. Close Parallel in postgresql.conf in PostgreSQL 10:
+```
+max_worker_processes = 32
+max_parallel_maintenance_workers = 2
+max_parallel_workers_per_gather = 6
+max_parallel_workers = 0
+```
+
+6. Close Parallel in postgresql.conf in PostgreSQL 10:
+```
+max_worker_processes = 32
+max_parallel_maintenance_workers = 2
 max_parallel_workers_per_gather = 6
 max_parallel_workers = 6
 ```
 I got the results like this:
-![the data of benchmarking with jit on or off](/assets/the%20data%20of%20benchmarking%20with%20jit%20on%20or%20off_2iitryl1k.png)
+![The results of time of JIT on or off in PostgreSQL 11 and Parallel on or off in PostgreSQL 10](/assets/The%20results%20of%20time%20of%20JIT%20on%20or%20off%20in%20PostgreSQL%2011%20and%20Parallel%20on%20or%20off%20in%20PostgreSQL%2010.png)
 
 you could see the Histogram:
-![Parallel off with jit](/assets/Parallel%20off%20with%20jit.png)![Parallel on with jit](/assets/Parallel%20on%20with%20jit.png)
-Written at the end:
-I have not found the JIT to be more efficient than the close it. May be a problem with my database settings or the method I tested.
+1. Parallel off with JIT on or off in PostgreSQL 11, JIt on is 36.35% higher than off performance with Parallel off:
+![Parallel off with JIT on or off in PostgreSQL 11](/assets/Parallel%20off%20with%20JIT%20on%20or%20off%20in%20PostgreSQL%2011.png)
+2. Parallel on with JIT on or off in PostgreSQL 11, JIt on is 8.59% lower than off performance with Parallel off:
+![Parallel on with JIT on or off in PostgreSQL 11](/assets/Parallel%20on%20with%20JIT%20on%20or%20off%20in%20PostgreSQL%2011.png)
+3. JIT on or off in PostgreSQL 11 and in PostgreSQL 10 with Parallel off, JIt on in PostgreSQL 11 is 51.02% higher than off in PostgreSQL 10 performance with Parallel off:
+![JIT on or off in PostgreSQL 11 and in PostgreSQL 10 with Parallel off](/assets/JIT%20on%20or%20off%20in%20PostgreSQL%2011%20and%20in%20PostgreSQL%2010%20with%20Parallel%20off.png)
+4. JIT on or off in PostgreSQL 11 and in PostgreSQL 10 with Parallel on, JIt on in PostgreSQL 11 is 27.33% higher than off in PostgreSQL 10 performance with Parallel off:
+![JIT on or off in PostgreSQL 11 and in PostgreSQL 10 with Parallel on](/assets/JIT%20on%20or%20off%20in%20PostgreSQL%2011%20and%20in%20PostgreSQL%2010%20with%20Parallel%20on.png)
 
+Written at the end:
+There are some issues in JIT on with Parallel on. I think this is the reason why the JIT is turned off by default.
 
 After my study, the process of JIT is as follows:
 ![JIT](/assets/JIT_kf27x0loh.png)
@@ -252,14 +296,4 @@ After my study, the process of JIT is as follows:
 4. Check for cost
 5. if high cost, do it in standard executor, else do it in the LLVM JIT
 ```
-The cost of optimization(step 5) is very high. So the
-JIT is not enabled by default in PG 11. I think there is a long way to go in the JIT.
-
-#### The Results for PG 11 with JIT and 10.5
-I got the results like this:
-![PG 10 tpch](/assets/PG%2010%20tpch.png)
-you could see the Histogram:
-pg 10 compare 11 JIT without parallel:
-![pg 10 compare 11 JIT without parallel](/assets/pg%2010%20compare%2011%20JIT%20without%20parallel.png)
-pg 10 compare 11 JIT wit parallel:
-![pg 10 compare 11 JIT with parallel](/assets/pg%2010%20compare%2011%20JIT%20with%20parallel.png)
+The cost of optimization(step 5) is very high in Parallel.
