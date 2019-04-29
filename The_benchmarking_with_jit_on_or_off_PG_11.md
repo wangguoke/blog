@@ -14,9 +14,6 @@ issues.So I completed the benchmark test in 6 cases.
 * Disk : Inter SSD 1T
 * OS : CentOS Linux release 7.6.1810 (Core)
 #### Installation PostgreSQL 11 and 10：
-
-To use the PostgreSQL Yum Repository, follow these steps:
-
 1. Install the PostgreSQL 11 by source code:
 ```
 git clone -b REL_11_STABLE git://git.postgresql.org/git/postgresql.git
