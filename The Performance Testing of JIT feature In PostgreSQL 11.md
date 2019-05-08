@@ -1,34 +1,34 @@
-#The Performance Testing of JIT feature In PostgreSQL 11
+## The Performance Testing of JIT feature In PostgreSQL 11
 
 As the data increases, the OLAP capabilities of the database will also be taken seriously.  OLAP functionality is primarily affected by data throughput and CPU computing power.  Now with the rise of SSD, Column Storage and Distributed Databases, I/O is not the main bottleneck of the database. Modern databases add a lot of logical and virtual function calls in response to various scenarios.  A lot of redundant operations have been added to the original operation to ensure that enough scenes are handled. But this reduces the efficiency of OLAP capabilities for database. In the PostgreSQL 11, they added the Just-in-Time compilation which could reduce the redundant logical operations and virtual function calls.
 1. Because those, I will do performance testing of JIT feature and identify the performance difference with JIT one and off.
 2. Another purpose is to compare the peformance of PG 11 with/without JIT enabled and compare it with previous 10.* version.
 
-###What is Just-in-Time compilation?
+### What is Just-in-Time compilation?
 >Just-in-Time compilation (JIT) is the process of turning some form of interpreted program evaluation into a native program, and doing so at runtime.
 >For example, instead of using a facility that can evaluate arbitrary SQL expressions to evaluate an SQL predicate like WHERE a.col = 3, it is possible to generate a function than can be natively executed by the CPU that just handles that expression, yielding a speedup.
 >That this is done at query execution time, possibly even only in cases where the relevant task is done a number of times, makes it JIT, rather than ahead-of-time (AOT). Given the way JIT compilation is used in PostgreSQL, the lines between interpretation, AOT and JIT are somewhat blurry.
 >Note that the interpreted program turned into a native program does not necessarily have to be a program in the classical sense. E.g. it is highly beneficial to JIT compile tuple deforming into a native function just handling a specific type of table, despite tuple deforming not commonly being understood as a "program".
 
-###How to JIT?
+### How to JIT?
 >PostgreSQL, by default, uses LLVM to perform JIT. LLVM was chosen because it is developed by several large corporations and therefore unlikely to be discontinued, because it has a license compatible with PostgreSQL, and because its IR can be generated from C using the Clang compiler.
 
-###What is the LLVM?
+### What is the LLVM?
 >The LLVM Project is a collection of modular and reusable compiler and toolchain technologies. Despite its name, LLVM has little to do with traditional virtual machines. The name "LLVM" itself is not an acronym; it is the full name of the project.
 >LLVM began as a research project at the University of Illinois, with the goal of providing a modern, SSA-based compilation strategy capable of supporting both static and dynamic compilation of arbitrary programming languages. Since then, LLVM has grown to be an umbrella project consisting of a number of subprojects, many of which are being used in production by a wide variety of commercial and open source projects as well as being widely used in academic research. Code in the LLVM project is licensed under the "Apache 2.0 License with LLVM exceptions".
 
-####LLVM's implementation of the three-phase design
+#### LLVM's implementation of the three-phase design
 The following picture despites the three-phase design of llvm.
 ![Image [2]](/assets/Image%20[2].png)
 In an LLVM-based compiler, a front end is responsible for parsing, validating and diagnosing errors in the input code, then translating the parsed code into LLVM IR (usually, but not always, by building an AST and then converting the AST to LLVM IR). This IR is optionally fed through a series of analysis and optimization passes which improve the code, then is sent into a code generator to produce native machine code.
-####The time about LLVM
+#### The time about LLVM
 ![Image [3]](/assets/Image%20[3].png)
 As mentioned earlier, LLVM IR can be efficiently (de)serialized to/from a binary format known as LLVM bitcode. Since LLVM IR is self-contained, and serialization
 is a lossless process, we can do part of compilation, save our progress to disk, then continue work at some point in the future. This feature provides a number of
 interesting capabilities including support for link-time and install-time optimization, both of which delay code generation from "compile time".
 
-###How to open the JIT in PostgreSQL 11?
-####Build with --with-llvm
+### How to open the JIT in PostgreSQL 11?
+#### Build with --with-llvm
 PostgreSQL has builtin support to perform JIT compilation using LLVM when PostgreSQL is built with --with-llvm.
 ```
 ./configure --prefix=/home/postgres/pg11JIT --with-openssl --with-libxml --with-libxslt --with-llvm
@@ -37,7 +37,7 @@ cd contrib
 make -j6; make install
 ```
 
-####Turn on the JIT
+#### Turn on the JIT
 >The configuration variable jit determines whether JIT compilation is enabled or disabled. If it is enabled, the configuration variables jit_above_cost, jit_inline_above_cost, and jit_optimize_above_cost determine whether JITcompilation is performed for a query, and how much effort is spent doing so.
 ```
 set jit=on;
@@ -47,12 +47,12 @@ set jit_optimize_above_cost=0;
 ```
 jit_provider determines which JIT implementation is used. It is rarely required to be changed.
 
-###How does the JIT work?
-####Reduce the redundant logical and the virtual function calls
+### How does the JIT work?
+#### Reduce the redundant logical and the virtual function calls
 We could use 'select 3<4;' as an example:
 ![3compare4](/assets/3compare4_9a1pmtntz.png)
 
-###Do the performance testing
+### Do the performance testing
 #### Hardware Configuration：
 * CPU : i5 8400
 * Memory : 16G DDR4
@@ -263,9 +263,9 @@ All the results are written into the output directory (first parameter). To get 
 ```
 php process.php ./results output.csv
 ```
-####Test Plan
+#### Test Plan
 As we all know, PG 10 and 11 have the function of parallel query.
-#####What is Parallel Query?
+##### What is Parallel Query?
 >PostgreSQL can devise query plans which can leverage multiple CPUs in order to answer queries faster. This feature is known as parallel query.
 
 In order to avoid the impact of parallel query, I turn off this feature for testing in the first.
@@ -352,13 +352,13 @@ We will find that the execution time is greatly reduced with turning on the JIT.
 And we could get this:
 ![percentage2](/assets/percentage2.png)
 
-###overall summary of JIT performance:
+### overall summary of JIT performance:
 This JIT depends on the situation. If we turn on the JIT, we could get a 30% performance boost. But we must turn off the parallel query.
 So I think there are some issues in JIT on with Parallel on.
 
-###Suggestions for Improvement
+### Suggestions for Improvement
 I know that llvm can improve the utilization of cpu cache. But I could not find it in PostgreSQL 11. Maybe I still need to learn further.
-####How the llvm improve the utilization of cpu cache?
+#### How the llvm improve the utilization of cpu cache?
 You could see it in the following picture:
 We could use 'select column from table where condition group by column order by  column;' as an example:
 ![improve cpu cache](/assets/improve%20cpu%20cache_rfwpyjg8u.png)
@@ -366,7 +366,7 @@ Without the JIT, data is obtained one by one(like the left).
 With the JIT, we could get a lot of data to process together(like the right).
 This may be to improve the peformance with enhance the optimization options or changing the order of optimization.
 
-###Reference
+### Reference
 https://www.postgresql.org/docs/11/runtime-config-developer.html
 https://www.postgresql.org/docs/9.6/parallel-query.html
 《JIT-Compiling SQL Queries in PostgreSQL Using LLVM》
