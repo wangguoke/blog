@@ -1,7 +1,12 @@
 ## The Performance Testing of JIT feature In PostgreSQL 11
 
-As the data increases, the OLAP capabilities of the database will also be taken seriously.  OLAP functionality is primarily affected by data throughput and CPU computing power.  Now with the rise of SSD, Column Storage and Distributed Databases, I/O is not the main bottleneck of the database. Modern databases add a lot of logical and virtual function calls in response to various scenarios.  A lot of redundant operations have been added to the original operation to ensure that enough scenes are handled. But this reduces the efficiency of OLAP capabilities for database. In the PostgreSQL 11, they added the Just-in-Time compilation which could reduce the redundant logical operations and virtual function calls.
-1. Because those, I will do performance testing of JIT feature and identify the performance difference with JIT one and off.
+In today's enterprise the data has been growing at a unprecendent rate, with the sharp rise in data the requirement for performing business intelligence and analytical queries is also increasing. Most enterprise are also relying to store there very large historical data in nosql or distributed storage like Hadoop for performing complex analytical queries. Having said that the OLAP capabitlities of the database are also getting there run for the money, the OLAP workloads are increasing and hence the need to enhance database OLAP functionality to handle the growing OLAP workloads. OLAP functionality is primarily affected by data throughput and CPU computing power.  Now with the rise of SSD, Column Storage and Distributed Databases, I/O is not the main bottleneck of the database. Modern databases add a lot of logical and virtual function calls in response to various scenarios.  A lot of redundant operations have been added to the original operation to ensure that enough scenes are handled. This reduces the efficiency of OLAP capabilities for database. In the PostgreSQL 11, they added the Just-in-Time compilation which could reduce the redundant logical operations and virtual function calls. 
+
+JIT is a considered as a major feature in PG 11 and is expected to give siginifact rise in performance for specific workloads. It is important to note that JIT doesn't benefit every workload, it is known to give significant performance to specific workloads specially the OLAP worklaods.
+
+It is therefore i ventured to perform testing and benchmarking of JIT with PG 11, my testing focusses on the following areas :
+
+1. Perform testing of JIT feature and identify the performance difference with JIT one and off with PG 11.
 2. Another purpose is to compare the peformance of PG 11 with/without JIT enabled and compare it with previous 10.* version.
 
 ### What is Just-in-Time compilation?
