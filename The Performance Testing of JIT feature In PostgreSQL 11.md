@@ -420,7 +420,9 @@ We could get that the performance of the PG11 is 37.1% higher than the PG10.
 
 ### overall summary of JIT performance:
 This JIT depends on the situation. In the 22 SQL cases, performance has improved and some have declined.
-So I think there are some issues in JIT on with Parallel on.
+I think there is 2 issues in the JIT.
+1. The default values about the parameters for JIT are not right.
+2. The query optimizer has some unreasonable design.
 
 ### Suggestions for Improvement
 1. Improve the cost value or add new parameters to find the right case.
