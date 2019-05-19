@@ -430,7 +430,7 @@ I think there is 2 issues in the JIT.
 3. We can improve our query optimizer based on the information provided by LLVM.
 
 ### Reference
-https://www.postgresql.org/docs/11/runtime-config-developer.html
-https://www.postgresql.org/docs/9.6/parallel-query.html
-《JIT-Compiling SQL Queries in PostgreSQL Using LLVM》
-《The Architecture of Open Source Applications: LLVM》
+* https://www.postgresql.org/docs/11/runtime-config-developer.html
+* https://www.postgresql.org/docs/9.6/parallel-query.html
+* 《JIT-Compiling SQL Queries in PostgreSQL Using LLVM》
+* 《The Architecture of Open Source Applications: LLVM》
