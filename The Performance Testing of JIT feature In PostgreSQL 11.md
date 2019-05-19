@@ -1,6 +1,6 @@
 ## The Performance Testing of JIT feature In PostgreSQL 11
 
-In today's enterprise the data has been growing at a unprecendent rate, with the sharp rise in data the requirement for performing business intelligence and analytical queries is also increasing. Most enterprise are also relying to store there very large historical data in nosql or distributed storage like Hadoop for performing complex analytical queries. Having said that the OLAP capabitlities of the database are also getting there run for the money, the OLAP workloads are increasing and hence the need to enhance database OLAP functionality to handle the growing OLAP workloads. OLAP functionality is primarily affected by data throughput and CPU computing power.  Now with the rise of SSD, Column Storage and Distributed Databases, I/O is not the main bottleneck of the database. Modern databases add a lot of logical and virtual function calls in response to various scenarios.  A lot of redundant operations have been added to the original operation to ensure that enough scenes are handled. This reduces the efficiency of OLAP capabilities for database. In the PostgreSQL 11, they added the Just-in-Time compilation which could reduce the redundant logical operations and virtual function calls. 
+In today's enterprise the data has been growing at a unprecendent rate, with the sharp rise in data the requirement for performing business intelligence and analytical queries is also increasing. Most enterprise are also relying to store there very large historical data in nosql or distributed storage like Hadoop for performing complex analytical queries. Having said that the OLAP capabitlities of the database are also getting there run for the money, the OLAP workloads are increasing and hence the need to enhance database OLAP functionality to handle the growing OLAP workloads. OLAP functionality is primarily affected by data throughput and CPU computing power.  Now with the rise of SSD, Column Storage and Distributed Databases, I/O is not the main bottleneck of the database. Modern databases add a lot of logical and virtual function calls in response to various scenarios.  A lot of redundant operations have been added to the original operation to ensure that enough scenes are handled. This reduces the efficiency of OLAP capabilities for database. In the PostgreSQL 11, they added the Just-in-Time compilation which could reduce the redundant logical operations and virtual function calls.
 
 JIT is a considered as a major feature in PG 11 and is expected to give siginifact rise in performance for specific workloads. It is important to note that JIT doesn't benefit every workload, it is known to give significant performance to specific workloads specially the OLAP worklaods.
 
@@ -32,6 +32,12 @@ As mentioned earlier, LLVM IR can be efficiently (de)serialized to/from a binary
 is a lossless process, we can do part of compilation, save our progress to disk, then continue work at some point in the future. This feature provides a number of
 interesting capabilities including support for link-time and install-time optimization, both of which delay code generation from "compile time".
 
+#### The Pass about LLVM
+![PassLinkage](/assets/PassLinkage.png)
+>The library-based design of the LLVM optimizer allows our implementer to pick and choose both the order in which passes execute, and which ones make sense for the image processing domain: if everything is defined as a single big function, it doesn't make sense to waste time on inlining. If there are few pointers, alias analysis and memory optimization aren't worth bothering about. However, despite our best efforts, LLVM doesn't magically solve all optimization problems! Since the pass subsystem is modularized and the PassManager itself doesn't know anything about the internals of the passes, the implementer is free to implement their own language-specific passes to cover for deficiencies in the LLVM optimizer or to explicit language-specific optimization opportunities.
+
+You can write a special pass for your program.
+
 ### How to open the JIT in PostgreSQL 11?
 #### Build with --with-llvm
 PostgreSQL has builtin support to perform JIT compilation using LLVM when PostgreSQL is built with --with-llvm.
@@ -56,6 +62,59 @@ jit_provider determines which JIT implementation is used. It is rarely required 
 #### Reduce the redundant logical and the virtual function calls
 We could use 'select 3<4;' as an example:
 ![3compare4](/assets/3compare4_9a1pmtntz.png)
+
+#### How to verify this process?
+There is a jit_dump_bitcode
+>Writes the generated LLVM IR out to the file system, inside data_directory. This is only useful for working on the internals of the JIT implementation. The default setting is off. This parameter can only be changed by a superuser.
+
+You will get the bitcode about your query plan:
+```
+-rw-------. 1 postgres postgres 18732 May 14 18:03 30949.0.bc
+-rw-------. 1 postgres postgres 15592 May 14 18:03 30949.0.optimized.bc
+-rw-------. 1 postgres postgres 14332 May 14 18:03 30949.1.bc
+-rw-------. 1 postgres postgres  9808 May 14 18:03 30949.1.optimized.bc
+-rw-------. 1 postgres postgres 15472 May 14 18:04 30949.2.bc
+-rw-------. 1 postgres postgres 11616 May 14 18:04 30949.2.optimized.bc
+-rw-------. 1 postgres postgres 18732 May 14 18:04 30949.3.bc
+-rw-------. 1 postgres postgres 15592 May 14 18:04 30949.3.optimized.bc
+-rw-------. 1 postgres postgres 15516 May 14 18:04 30949.4.bc
+-rw-------. 1 postgres postgres 11616 May 14 18:04 30949.4.optimized.bc
+-rw-------. 1 postgres postgres 14332 May 14 18:04 30949.5.bc
+-rw-------. 1 postgres postgres  9808 May 14 18:04 30949.5.optimized.bc
+-rw-------. 1 postgres postgres 21100 May 14 18:05 30949.6.bc
+-rw-------. 1 postgres postgres 16800 May 14 18:05 30949.6.optimized.bc
+-rw-------. 1 postgres postgres 17180 May 14 18:05 30949.7.bc
+-rw-------. 1 postgres postgres 13688 May 14 18:05 30949.7.optimized.bc
+```
+The file name consists of the MyProcPid, llvm_generation, and extension. We could use the tool llvm-dis to turn a .bc file into a .ll file.
+```
+[root@neoc data]# llvm-dis 30949.0.bc
+cat 30949.0.ll
+; ModuleID = '30949.0.bc'
+source_filename = "pg"
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
+
+%struct.ExprState = type { %struct.Node, i8, i8, i64, %struct.TupleTableSlot*, %struct.ExprEvalStep*, i64 (%struct.ExprState*, %struct.ExprContext*, i8*)*, %struct.Expr*, i8*, i32, i32, %struct.PlanState*, %struct.ParamListInfoData*, i64*, i8*, i64*, i8* }
+%struct.Node = type { i32 }
+%struct.TupleTableSlot = type { i32, i8, i8, i8, i8, %struct.HeapTupleData*, %struct.tupleDesc*, %struct.MemoryContextData*, i32, i32, i64*, i8*, %struct.MinimalTupleData*, %struct.HeapTupleData, i32, i8 }
+%struct.tupleDesc = type { i32, i32, i32, i8, i32, %struct.tupleConstr*, [0 x %struct.FormData_pg_attribute] }
+%struct.tupleConstr = type { %struct.attrDefault*, %struct.constrCheck*, %struct.attrMissing*, i16, i16, i8 }
+%struct.attrDefault = type { i16, i8* }
+%struct.constrCheck = type { i8*, i8*, i8, i8 }
+.
+.
+.
+It's too lang.
+```
+
+#### How the llvm improve the utilization of cpu cache?
+You could see it in the following picture:
+We could use 'select column from table where condition group by column order by  column;' as an example:
+![improve cpu cache](/assets/improve%20cpu%20cache_rfwpyjg8u.png)
+Without the JIT, data is obtained one by one(like the left).
+With the JIT, we could get a lot of data to process together(like the right).
+This may be to improve the peformance with enhance the optimization options or changing the order of optimization.
 
 ### Do the performance testing
 #### Hardware Configuration：
@@ -106,10 +165,6 @@ wal_level = minimal
 max_wal_senders = 0
 max_wal_size = 40GB
 random_page_cost = 1.1
-max_worker_processes = 32
-max_parallel_maintenance_workers = 2
-max_parallel_workers_per_gather = 6
-max_parallel_workers = 0
 ```
 7. Install the PostgreSQL 10 and the Configuration of postgresql.conf I changed:
 ```
@@ -128,9 +183,6 @@ wal_level = minimal
 max_wal_senders = 0
 max_wal_size = 40GB
 random_page_cost = 1.1
-max_worker_processes = 32
-max_parallel_workers_per_gather = 6
-max_parallel_workers = 0
 ```
 
 #### Get data and tools
@@ -278,98 +330,102 @@ My configuration parameters are:
 1. Turn on JIT in PostgreSQL 11:
 ```
 set jit=on;
-set jit_above_cost=0;
-set jit_inline_above_cost=0;
-set jit_optimize_above_cost=0;
-
-max_worker_processes = 32
-max_parallel_maintenance_workers = 0
-max_parallel_workers_per_gather = 0
-max_parallel_workers = 0
 ```
 2. Turn on JIT in PostgreSQL 11:
 ```
 set jit=off;
-set jit_above_cost=0;
-set jit_inline_above_cost=0;
-set jit_optimize_above_cost=0;
-
-max_worker_processes = 32
-max_parallel_maintenance_workers = 0
-max_parallel_workers_per_gather = 0
-max_parallel_workers = 0
 ```
 3. PostgreSQL 10:
 ```
-max_worker_processes = 32
-max_parallel_maintenance_workers = 0
-max_parallel_workers_per_gather = 0
-max_parallel_workers = 0
+as default
 ```
-We could get the results like this(unit is second):
-![results for JIT whit PG 10](/assets/results%20for%20JIT%20whit%20PG%2010.png)
+We could get the results like this(unit is second, JIT disabled in PG11 and JIT enabled in PG11):
+![PG112](/assets/PG112_atz0727xa.png)
 The query_1, query_2 ... and the query_22 is the 22 SQL for the testing of TPCH.
 The total is the sum of all 22 SQL execution times.
-The db_cache_hit_radio is the db cache hit radio. The results of the three tests are almost the same.
 To be more intuitive, we can look at the histogram:
-![the histogram of turn on JIT](/assets/the%20histogram%20of%20turn%20on%20JIT_xcqbb7an5.png)
-We will find that the execution time is greatly reduced with turning on the JIT.
-And we could get this:
-![percentage1](/assets/percentage1_wjhhuri8s.png)
-Now, let's turn on the parallel query.
-My configuration parameters are:
-1. Turn on JIT in PostgreSQL 11:
+![pg11h](/assets/pg11h.png)
+We will find that the execution time is greatly reduced with turning on the JIT. This is about 6.1% down.
+With the JIT turned on, performance has dropped.
+I had checked the explain. I found that the JIT disabled used less time than JIT enabled in the Nested Loop.
+JIT enabled in PG11:
 ```
-set jit=on;
-set jit_above_cost=0;
-set jit_inline_above_cost=0;
-set jit_optimize_above_cost=0;
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=72490.850..72624.050 rows=1 loops=1)
+   ->  Finalize GroupAggregate (actual time=71891.664..71891.664 rows=1 loops=1)
+         ->  Gather Merge (actual time=71891.649..72024.844 rows=4 loops=1)
+               ->  Sort (actual time=71799.894..71799.896 rows=53 loops=3)
+                     ->  Partial HashAggregate (actual time=71799.269..71799.684 rows=175 loops=3)
+                           ->  Hash Join (actual time=69631.747..71189.348 rows=1087902 loops=3)
+                                 ->  Parallel Hash Join  (actual time=69310.166..70696.067 rows=1087902 loops=3)
+                                       ->  Parallel Seq Scan on public.orders (actual time=0.504..9327.128 rows=5000000 loops=3)
+                                       ->  Parallel Hash (actual time=57497.965..57497.965 rows=1087902 loops=3)
+                                             ->  Nested Loop (actual time=45.005..56802.904 rows=1087902 loops=3)
+                                                   ->  Parallel Hash Join  (actual time=44.034..5326.659 rows=145140 loops=3)
+                                                         ->  Nested Loop (actual time=0.471..5146.321 rows=145140 loops=3)
+                                                               ->  Parallel Seq Scan on public.part (actual time=0.030..353.243 rows=36285 loops=3)
+                                                               ->  Index Scan using idx_partsupp_partkey on public.partsupp (actual time=0.122..0.130 rows=4 loops=108855)
+                                                         ->  Parallel Hash (actual time=43.378..43.378 rows=33333 loops=3)
+                                                               ->  Parallel Seq Scan on public.supplier (actual time=0.016..96.976 rows=100000 loops=1)
+                                                   ->  Index Scan using idx_lineitem_part_supp on public.lineitem (actual time=0.086..0.351 rows=7 loops=435420)
+                                 ->  Hash (actual time=321.382..321.382 rows=25 loops=3)
+                                       ->  Seq Scan on public.nation (actual time=321.368..321.371 rows=25 loops=3)
+ Planning Time: 30.108 ms
+ JIT:
+   Functions: 182
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 59.807 ms, Inlining 154.474 ms, Optimization 866.697 ms, Emission 539.179 ms, Total 1620.158 ms
+ Execution Time: 72662.415 ms
+(142 rows)
+```
+JIT disabled In PG11:
+```
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=53927.711..54069.684 rows=1 loops=1)
+   ->  Finalize GroupAggregate (actual time=53927.710..53927.710 rows=1 loops=1)
+         ->  Gather Merge (actual time=53927.698..54069.665 rows=4 loops=1)
+               ->  Sort (actual time=53885.863..53885.865 rows=54 loops=3)
+                     ->  Partial HashAggregate (actual time=53884.461..53884.900 rows=175 loops=3)
+                           ->  Hash Join (actual time=51626.569..53258.211 rows=1087902 loops=3)
+                                 ->  Parallel Hash Join (actual time=51624.992..53052.825 rows=1087902 loops=3)
+                                       ->  Parallel Seq Scan on public.orders (actual time=0.195..9286.259 rows=5000000 loops=3)
+                                       ->  Parallel Hash (actual time=40238.570..40238.570 rows=1087902 loops=3)
+                                             ->  Nested Loop (actual time=68.942..39704.018 rows=1087902 loops=3)
+                                                   ->  Parallel Hash Join (actual time=68.193..5794.431 rows=145140 loops=3)
+                                                         ->  Nested Loop (actual time=1.703..5596.634 rows=145140 loops=3)
+                                                               ->  Parallel Seq Scan on public.part (actual time=0.209..289.795 rows=36285 loops=3)
+                                                               ->  Index Scan using idx_partsupp_partkey on public.partsupp (actual time=0.136..0.144 rows=4 loops=108855)
+                                                         ->  Parallel Hash (actual time=66.231..66.231 rows=33333 loops=3)
+                                                               ->  Parallel Seq Scan on public.supplier (actual time=0.022..57.748 rows=33333 loops=3)
+                                                   ->  Index Scan using idx_lineitem_part_supp on public.lineitem (actual time=0.069..0.231 rows=7 loops=435420)
+                                 ->  Hash (actual time=0.038..0.038 rows=25 loops=3)
+                                       ->  Seq Scan on public.nation (actual time=0.020..0.023 rows=25 loops=3)
+ Planning Time: 16.777 ms
+ Execution Time: 54071.434 ms
+(144 rows)
+```
+We could get the results like this(unit is second, JIT disabled in PG11 and PG10):
+![1110noJIT](/assets/1110noJIT.png)
 
-max_worker_processes = 32
-max_parallel_maintenance_workers = 2
-max_parallel_workers_per_gather = 6
-max_parallel_workers = 6
-```
-2. Turn on JIT in PostgreSQL 11:
-```
-set jit=off;
-set jit_above_cost=0;
-set jit_inline_above_cost=0;
-set jit_optimize_above_cost=0;
-
-max_worker_processes = 32
-max_parallel_maintenance_workers = 2
-max_parallel_workers_per_gather = 6
-max_parallel_workers = 6
-```
-3. PostgreSQL 10:
-```
-max_worker_processes = 32
-max_parallel_maintenance_workers = 2
-max_parallel_workers_per_gather = 6
-max_parallel_workers = 6
-```
-We could get the results like this(unit is second):
-![results for JIT whit PG 10 2](/assets/results%20for%20JIT%20whit%20PG%2010%202.png)
 To be more intuitive, we can look at the histogram:
-![the histogram of turn on JIT 2](/assets/the%20histogram%20of%20turn%20on%20JIT%202_hl1mm9q63.png)
-We will find that the execution time is greatly reduced with turning on the JIT.
-And we could get this:
-![percentage2](/assets/percentage2.png)
+![1110noJITh](/assets/1110noJITh.png)
+We could get that the performance of the PG11 is 41% higher than the PG10. This shows that PG11 has made a lot of improvements in performance. Please refer to the official documentation for detailed information.
+
+We could get the results like this(unit is second, JIT enabled in PG11 and PG10):
+![pg1110JIT](/assets/pg1110JIT.png)
+
+To be more intuitive, we can look at the histogram:
+![pg1110JITh](/assets/pg1110JITh.png)
+We could get that the performance of the PG11 is 37.1% higher than the PG10.
 
 ### overall summary of JIT performance:
-This JIT depends on the situation. If we turn on the JIT, we could get a 30% performance boost. But we must turn off the parallel query.
+This JIT depends on the situation. In the 22 SQL cases, performance has improved and some have declined.
 So I think there are some issues in JIT on with Parallel on.
 
 ### Suggestions for Improvement
-I know that llvm can improve the utilization of cpu cache. But I could not find it in PostgreSQL 11. Maybe I still need to learn further.
-#### How the llvm improve the utilization of cpu cache?
-You could see it in the following picture:
-We could use 'select column from table where condition group by column order by  column;' as an example:
-![improve cpu cache](/assets/improve%20cpu%20cache_rfwpyjg8u.png)
-Without the JIT, data is obtained one by one(like the left).
-With the JIT, we could get a lot of data to process together(like the right).
-This may be to improve the peformance with enhance the optimization options or changing the order of optimization.
+1. Improve the cost value or add new parameters to find the right case.
+2. We can add some special passes for PostgreSQL, like the Nested Loop.
+3. We can improve our query optimizer based on the information provided by LLVM.
 
 ### Reference
 https://www.postgresql.org/docs/11/runtime-config-developer.html
