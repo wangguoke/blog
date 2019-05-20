@@ -1,0 +1,97 @@
+Timing is on.
+      avg_yearly      
+----------------------
+ 3099072.404285714286
+(1 row)
+
+Time: 34423.502 ms (00:34.424)
+                                                                                                                                                                                                QUERY PLAN                                                                                                                                                                                                
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=5673641.24..5673641.25 rows=1 width=32) (actual time=20813.495..20920.108 rows=1 loops=1)
+   Output: ((sum(lineitem.l_extendedprice) / 7.0))
+   Buffers: shared hit=584390 read=743362, temp read=168753 written=168886
+   ->  Aggregate  (cost=5673641.24..5673641.25 rows=1 width=32) (actual time=20813.494..20813.494 rows=1 loops=1)
+         Output: (sum(lineitem.l_extendedprice) / 7.0)
+         Buffers: shared hit=161392 read=247833, temp read=56557 written=56602
+         ->  Merge Join  (cost=4788176.82..5673589.75 rows=20595 width=8) (actual time=10820.183..20812.657 rows=5246 loops=1)
+               Output: lineitem.l_extendedprice
+               Merge Cond: (lineitem_1.l_partkey = part.p_partkey)
+               Join Filter: (lineitem.l_quantity < ((0.2 * avg(lineitem_1.l_quantity))))
+               Rows Removed by Join Filter: 52510
+               Buffers: shared hit=161392 read=247833, temp read=56557 written=56602
+               ->  Finalize GroupAggregate  (cost=4787175.81..5540406.02 rows=2069800 width=40) (actual time=10805.210..20670.769 rows=1999862 loops=1)
+                     Output: lineitem_1.l_partkey, (0.2 * avg(lineitem_1.l_quantity))
+                     Group Key: lineitem_1.l_partkey
+                     Buffers: shared hit=159360 read=247833, temp read=56557 written=56602
+                     ->  Gather Merge  (cost=4787175.81..5478312.02 rows=4139600 width=40) (actual time=10805.192..18049.627 rows=5999333 loops=1)
+                           Output: lineitem_1.l_partkey, (PARTIAL avg(lineitem_1.l_quantity))
+                           Workers Planned: 2
+                           Workers Launched: 2
+                           Buffers: shared hit=471714 read=743362, temp read=168753 written=168886
+                           ->  Partial GroupAggregate  (cost=4786175.78..4999499.44 rows=2069800 width=40) (actual time=10774.862..16480.073 rows=1999870 loops=3)
+                                 Output: lineitem_1.l_partkey, PARTIAL avg(lineitem_1.l_quantity)
+                                 Group Key: lineitem_1.l_partkey
+                                 Buffers: shared hit=471714 read=743362, temp read=168753 written=168886
+                                 Worker 0: actual time=10802.564..16506.844 rows=1999914 loops=1
+                                   Buffers: shared hit=155863 read=248402, temp read=56143 written=56187
+                                 Worker 1: actual time=10792.863..16448.690 rows=1999921 loops=1
+                                   Buffers: shared hit=156491 read=247127, temp read=56053 written=56097
+                                 ->  Sort  (cost=4786175.78..4848659.50 rows=24993488 width=13) (actual time=10774.840..13525.513 rows=19994897 loops=3)
+                                       Output: lineitem_1.l_partkey, lineitem_1.l_quantity
+                                       Sort Key: lineitem_1.l_partkey
+                                       Sort Method: external merge  Disk: 452456kB
+                                       Buffers: shared hit=471714 read=743362, temp read=168753 written=168886
+                                       Worker 0: actual time=10802.540..13557.518 rows=19956961 loops=1
+                                         Buffers: shared hit=155863 read=248402, temp read=56143 written=56187
+                                       Worker 1: actual time=10792.832..13502.656 rows=19925012 loops=1
+                                         Buffers: shared hit=156491 read=247127, temp read=56053 written=56097
+                                       ->  Parallel Seq Scan on public.lineitem lineitem_1  (cost=0.00..1464914.88 rows=24993488 width=13) (actual time=0.022..4550.854 rows=19995351 loops=3)
+                                             Output: lineitem_1.l_partkey, lineitem_1.l_quantity
+                                             Buffers: shared hit=471618 read=743362
+                                             Worker 0: actual time=0.026..4592.957 rows=19956961 loops=1
+                                               Buffers: shared hit=155815 read=248402
+                                             Worker 1: actual time=0.031..4592.550 rows=19925012 loops=1
+                                               Buffers: shared hit=156443 read=247127
+               ->  Materialize  (cost=1001.02..106379.24 rows=59700 width=25) (actual time=3.539..31.441 rows=57756 loops=1)
+                     Output: lineitem.l_extendedprice, lineitem.l_partkey, lineitem.l_quantity, part.p_partkey
+                     Buffers: shared hit=2032
+                     ->  Gather Merge  (cost=1001.02..106229.99 rows=59700 width=25) (actual time=3.537..24.507 rows=57756 loops=1)
+                           Output: lineitem.l_extendedprice, lineitem.l_partkey, lineitem.l_quantity, part.p_partkey
+                           Workers Planned: 2
+                           Workers Launched: 2
+                           Buffers: shared hit=112676
+                           ->  Nested Loop  (cost=0.99..98339.10 rows=24875 width=25) (actual time=0.368..188.262 rows=19252 loops=3)
+                                 Output: lineitem.l_extendedprice, lineitem.l_partkey, lineitem.l_quantity, part.p_partkey
+                                 Buffers: shared hit=112676
+                                 Worker 0: actual time=0.428..280.954 rows=28387 loops=1
+                                   Buffers: shared hit=55642
+                                 Worker 1: actual time=0.112..274.975 rows=28355 loops=1
+                                   Buffers: shared hit=55002
+                                 ->  Parallel Index Scan using part_pkey on public.part  (cost=0.43..69516.78 rows=858 width=4) (actual time=0.321..128.802 rows=641 loops=3)
+                                       Output: part.p_partkey, part.p_name, part.p_mfgr, part.p_brand, part.p_type, part.p_size, part.p_container, part.p_retailprice, part.p_comment
+                                       Filter: ((part.p_brand = 'Brand#15'::bpchar) AND (part.p_container = 'WRAP PKG'::bpchar))
+                                       Rows Removed by Filter: 666026
+                                       Buffers: shared hit=46988
+                                       Worker 0: actual time=0.371..192.593 rows=950 loops=1
+                                         Buffers: shared hit=23333
+                                       Worker 1: actual time=0.058..186.907 rows=938 loops=1
+                                         Buffers: shared hit=22776
+                                 ->  Index Scan using idx_lineitem_part_supp on public.lineitem  (cost=0.56..33.30 rows=29 width=21) (actual time=0.009..0.088 rows=30 loops=1922)
+                                       Output: lineitem.l_orderkey, lineitem.l_partkey, lineitem.l_suppkey, lineitem.l_linenumber, lineitem.l_quantity, lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_tax, lineitem.l_returnflag, lineitem.l_linestatus, lineitem.l_shipdate, lineitem.l_commitdate, lineitem.l_receiptdate, lineitem.l_shipinstruct, lineitem.l_shipmode, lineitem.l_comment
+                                       Index Cond: (lineitem.l_partkey = part.p_partkey)
+                                       Buffers: shared hit=65688
+                                       Worker 0: actual time=0.009..0.088 rows=30 loops=950
+                                         Buffers: shared hit=32309
+                                       Worker 1: actual time=0.009..0.089 rows=30 loops=938
+                                         Buffers: shared hit=32226
+ Planning time: 0.315 ms
+ Execution time: 20978.777 ms
+(79 rows)
+
+Time: 20983.652 ms (00:20.984)
+      avg_yearly      
+----------------------
+ 3099072.404285714286
+(1 row)
+
+Time: 16917.969 ms (00:16.918)

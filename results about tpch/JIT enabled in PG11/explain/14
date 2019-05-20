@@ -1,0 +1,81 @@
+Timing is on.
+    promo_revenue    
+---------------------
+ 16.6071446356549154
+(1 row)
+
+Time: 3530.348 ms (00:03.530)
+                                                                                                                               QUERY PLAN                                                                                                                                
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=754580.34..754580.36 rows=1 width=32) (actual time=1386.764..1430.309 rows=1 loops=1)
+   Output: (((100.00 * sum(CASE WHEN ((part.p_type)::text ~~ 'PROMO%'::text) THEN (lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)) ELSE '0'::numeric END)) / sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))))
+   Buffers: shared hit=641949 read=174967
+   ->  Finalize Aggregate  (cost=754580.34..754580.36 rows=1 width=32) (actual time=1221.305..1221.305 rows=1 loops=1)
+         Output: ((100.00 * sum(CASE WHEN ((part.p_type)::text ~~ 'PROMO%'::text) THEN (lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)) ELSE '0'::numeric END)) / sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+         Buffers: shared hit=641949 read=174967
+         ->  Gather  (cost=754580.11..754580.32 rows=2 width=64) (actual time=1218.563..1264.813 rows=3 loops=1)
+               Output: (PARTIAL sum(CASE WHEN ((part.p_type)::text ~~ 'PROMO%'::text) THEN (lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)) ELSE '0'::numeric END)), (PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+               Workers Planned: 2
+               Workers Launched: 2
+               JIT for worker 0:
+                 Functions: 17
+                 Options: Inlining true, Optimization true, Expressions true, Deforming true
+                 Timing: Generation 2.304 ms, Inlining 37.117 ms, Optimization 91.388 ms, Emission 59.885 ms, Total 190.693 ms
+               JIT for worker 1:
+                 Functions: 17
+                 Options: Inlining true, Optimization true, Expressions true, Deforming true
+                 Timing: Generation 2.316 ms, Inlining 37.034 ms, Optimization 91.455 ms, Emission 59.872 ms, Total 190.676 ms
+               Buffers: shared hit=641949 read=174967
+               ->  Partial Aggregate  (cost=753580.11..753580.12 rows=1 width=64) (actual time=1205.863..1205.863 rows=1 loops=3)
+                     Output: PARTIAL sum(CASE WHEN ((part.p_type)::text ~~ 'PROMO%'::text) THEN (lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)) ELSE '0'::numeric END), PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))
+                     Buffers: shared hit=641949 read=174967
+                     Worker 0: actual time=1199.516..1199.516 rows=1 loops=1
+                       Buffers: shared hit=174487 read=43887
+                     Worker 1: actual time=1199.757..1199.757 rows=1 loops=1
+                       Buffers: shared hit=173658 read=43516
+                     ->  Parallel Hash Join  (cost=680486.31..747835.34 rows=328272 width=33) (actual time=881.568..1134.143 rows=257647 loops=3)
+                           Output: part.p_type, lineitem.l_extendedprice, lineitem.l_discount
+                           Hash Cond: (part.p_partkey = lineitem.l_partkey)
+                           Buffers: shared hit=641949 read=174967
+                           Worker 0: actual time=875.300..1130.090 rows=248669 loops=1
+                             Buffers: shared hit=174487 read=43887
+                           Worker 1: actual time=875.290..1130.645 rows=251116 loops=1
+                             Buffers: shared hit=173658 read=43516
+                           ->  Parallel Seq Scan on public.part  (cost=0.00..49314.41 rows=833341 width=25) (actual time=0.014..73.702 rows=666667 loops=3)
+                                 Output: part.p_partkey, part.p_name, part.p_mfgr, part.p_brand, part.p_type, part.p_size, part.p_container, part.p_retailprice, part.p_comment
+                                 Buffers: shared hit=40981
+                                 Worker 0: actual time=0.025..79.510 rows=642457 loops=1
+                                   Buffers: shared hit=13165
+                                 Worker 1: actual time=0.009..79.705 rows=649867 loops=1
+                                   Buffers: shared hit=13316
+                           ->  Parallel Hash  (cost=676382.91..676382.91 rows=328272 width=20) (actual time=879.834..879.834 rows=257647 loops=3)
+                                 Output: lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_partkey
+                                 Buckets: 1048576  Batches: 1  Memory Usage: 50560kB
+                                 Buffers: shared hit=600909 read=174966
+                                 Worker 0: actual time=874.970..874.971 rows=204405 loops=1
+                                   Buffers: shared hit=161293 read=43886
+                                 Worker 1: actual time=874.892..874.892 rows=203058 loops=1
+                                   Buffers: shared hit=160312 read=43516
+                                 ->  Parallel Index Scan using idx_lineitem_shipdate on public.lineitem  (cost=0.56..676382.91 rows=328272 width=20) (actual time=125.762..813.861 rows=257647 loops=3)
+                                       Output: lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_partkey
+                                       Index Cond: ((lineitem.l_shipdate >= '1994-05-01'::date) AND (lineitem.l_shipdate < '1994-06-01 00:00:00'::timestamp without time zone))
+                                       Buffers: shared hit=600909 read=174966
+                                       Worker 0: actual time=188.626..820.071 rows=204405 loops=1
+                                         Buffers: shared hit=161293 read=43886
+                                       Worker 1: actual time=188.602..820.037 rows=203058 loops=1
+                                         Buffers: shared hit=160312 read=43516
+ Planning Time: 0.250 ms
+ JIT:
+   Functions: 55
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 6.572 ms, Inlining 81.107 ms, Optimization 280.827 ms, Emission 180.095 ms, Total 548.601 ms
+ Execution Time: 1432.357 ms
+(63 rows)
+
+Time: 1434.077 ms (00:01.434)
+    promo_revenue    
+---------------------
+ 16.6071446356549154
+(1 row)
+
+Time: 972.659 ms

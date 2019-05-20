@@ -1,0 +1,7 @@
+Timing is on.
+ o_orderpriority | order_count 
+-----------------+-------------
+ 1-URGENT        |      105623
+(1 row)
+
+Time: 2381.213 ms (00:02.381)

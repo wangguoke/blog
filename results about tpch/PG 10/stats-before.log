@@ -1,0 +1,10 @@
+ checkpoints_timed | checkpoints_req | checkpoint_write_time | checkpoint_sync_time | buffers_checkpoint | buffers_clean | maxwritten_clean | buffers_backend | buffers_backend_fsync | buffers_alloc |          stats_reset          
+-------------------+-----------------+-----------------------+----------------------+--------------------+---------------+------------------+-----------------+-----------------------+---------------+-------------------------------
+               228 |               0 |                319335 |                  143 |              36539 |           246 |                0 |         5228386 |                     0 |      82424466 | 2019-04-30 00:00:02.758985+08
+(1 row)
+
+ datid | datname  | numbackends | xact_commit | xact_rollback | blks_read | blks_hit  | tup_returned | tup_fetched | tup_inserted | tup_updated | tup_deleted | conflicts | temp_files | temp_bytes  | deadlocks | blk_read_time | blk_write_time |          stats_reset          
+-------+----------+-------------+-------------+---------------+-----------+-----------+--------------+-------------+--------------+-------------+-------------+-----------+------------+-------------+-----------+---------------+----------------+-------------------------------
+ 13214 | postgres |           1 |        3775 |           113 | 157047655 | 351652686 |   7326421439 |  3232143117 |     86587657 |        2044 |         243 |         0 |       3356 | 66646185271 |         0 |             0 |              0 | 2019-04-30 00:00:49.585898+08
+(1 row)
+

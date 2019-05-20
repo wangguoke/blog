@@ -1,0 +1,8 @@
+ERROR:  multiple primary keys for table "part" are not allowed
+ERROR:  multiple primary keys for table "supplier" are not allowed
+ERROR:  multiple primary keys for table "partsupp" are not allowed
+ERROR:  multiple primary keys for table "customer" are not allowed
+ERROR:  multiple primary keys for table "orders" are not allowed
+ERROR:  multiple primary keys for table "lineitem" are not allowed
+ERROR:  multiple primary keys for table "nation" are not allowed
+ERROR:  multiple primary keys for table "region" are not allowed

@@ -1,0 +1,76 @@
+Timing is on.
+    revenue    
+---------------
+ 35900990.3515
+(1 row)
+
+Time: 4745.717 ms (00:04.746)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                QUERY PLAN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=155857.09..155857.10 rows=1 width=32) (actual time=282.461..298.909 rows=1 loops=1)
+   Output: (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+   Buffers: shared hit=204525
+   ->  Finalize Aggregate  (cost=155857.09..155857.10 rows=1 width=32) (actual time=267.926..267.926 rows=1 loops=1)
+         Output: sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))
+         Buffers: shared hit=204525
+         ->  Gather  (cost=155856.86..155857.07 rows=2 width=32) (actual time=267.843..284.362 rows=3 loops=1)
+               Output: (PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+               Workers Planned: 2
+               Workers Launched: 2
+               JIT for worker 0:
+                 Functions: 12
+                 Options: Inlining false, Optimization false, Expressions true, Deforming true
+                 Timing: Generation 1.828 ms, Inlining 0.000 ms, Optimization 0.729 ms, Emission 14.280 ms, Total 16.837 ms
+               JIT for worker 1:
+                 Functions: 12
+                 Options: Inlining false, Optimization false, Expressions true, Deforming true
+                 Timing: Generation 1.831 ms, Inlining 0.000 ms, Optimization 0.726 ms, Emission 14.302 ms, Total 16.859 ms
+               Buffers: shared hit=204525
+               ->  Partial Aggregate  (cost=154856.86..154856.87 rows=1 width=32) (actual time=257.921..257.921 rows=1 loops=3)
+                     Output: PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))
+                     Buffers: shared hit=204525
+                     Worker 0: actual time=253.126..253.126 rows=1 loops=1
+                       Buffers: shared hit=59378
+                     Worker 1: actual time=253.127..253.127 rows=1 loops=1
+                       Buffers: shared hit=58841
+                     ->  Nested Loop  (cost=0.56..154853.23 rows=484 width=12) (actual time=10.802..257.717 rows=378 loops=3)
+                           Output: lineitem.l_extendedprice, lineitem.l_discount
+                           Buffers: shared hit=204525
+                           Worker 0: actual time=16.785..252.928 rows=363 loops=1
+                             Buffers: shared hit=59378
+                           Worker 1: actual time=15.577..252.938 rows=304 loops=1
+                             Buffers: shared hit=58841
+                           ->  Parallel Seq Scan on public.part  (cost=0.00..76397.99 rows=2042 width=30) (actual time=10.251..141.020 rows=1600 loops=3)
+                                 Output: part.p_partkey, part.p_name, part.p_mfgr, part.p_brand, part.p_type, part.p_size, part.p_container, part.p_retailprice, part.p_comment
+                                 Filter: ((part.p_size >= 1) AND (((part.p_brand = 'Brand#51'::bpchar) AND (part.p_container = ANY ('{"SM CASE","SM BOX","SM PACK","SM PKG"}'::bpchar[])) AND (part.p_size <= 5)) OR ((part.p_brand = 'Brand#34'::bpchar) AND (part.p_container = ANY ('{"MED BAG","MED BOX","MED PKG","MED PACK"}'::bpchar[])) AND (part.p_size <= 10)) OR ((part.p_brand = 'Brand#33'::bpchar) AND (part.p_container = ANY ('{"LG CASE","LG BOX","LG PACK","LG PKG"}'::bpchar[])) AND (part.p_size <= 15))))
+                                 Rows Removed by Filter: 665067
+                                 Buffers: shared hit=40981
+                                 Worker 0: actual time=15.501..133.803 rows=1397 loops=1
+                                   Buffers: shared hit=11696
+                                 Worker 1: actual time=15.224..135.824 rows=1372 loops=1
+                                   Buffers: shared hit=11985
+                           ->  Index Scan using idx_lineitem_part_supp on public.lineitem  (cost=0.56..38.41 rows=1 width=25) (actual time=0.065..0.073 rows=0 loops=4800)
+                                 Output: lineitem.l_orderkey, lineitem.l_partkey, lineitem.l_suppkey, lineitem.l_linenumber, lineitem.l_quantity, lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_tax, lineitem.l_returnflag, lineitem.l_linestatus, lineitem.l_shipdate, lineitem.l_commitdate, lineitem.l_receiptdate, lineitem.l_shipinstruct, lineitem.l_shipmode, lineitem.l_comment
+                                 Index Cond: (lineitem.l_partkey = part.p_partkey)
+                                 Filter: ((lineitem.l_shipmode = ANY ('{AIR,"AIR REG"}'::bpchar[])) AND (lineitem.l_shipinstruct = 'DELIVER IN PERSON'::bpchar) AND (((lineitem.l_quantity >= '2'::numeric) AND (lineitem.l_quantity <= '12'::numeric)) OR ((lineitem.l_quantity >= '13'::numeric) AND (lineitem.l_quantity <= '23'::numeric)) OR ((lineitem.l_quantity >= '26'::numeric) AND (lineitem.l_quantity <= '36'::numeric))) AND (((part.p_brand = 'Brand#51'::bpchar) AND (part.p_container = ANY ('{"SM CASE","SM BOX","SM PACK","SM PKG"}'::bpchar[])) AND (lineitem.l_quantity >= '2'::numeric) AND (lineitem.l_quantity <= '12'::numeric) AND (part.p_size <= 5)) OR ((part.p_brand = 'Brand#34'::bpchar) AND (part.p_container = ANY ('{"MED BAG","MED BOX","MED PKG","MED PACK"}'::bpchar[])) AND (lineitem.l_quantity >= '13'::numeric) AND (lineitem.l_quantity <= '23'::numeric) AND (part.p_size <= 10)) OR ((part.p_brand = 'Brand#33'::bpchar) AND (part.p_container = ANY ('{"LG CASE","LG BOX","LG PACK","LG PKG"}'::bpchar[])) AND (lineitem.l_quantity >= '26'::numeric) AND (lineitem.l_quantity <= '36'::numeric) AND (part.p_size <= 15))))
+                                 Rows Removed by Filter: 30
+                                 Buffers: shared hit=163544
+                                 Worker 0: actual time=0.076..0.085 rows=0 loops=1397
+                                   Buffers: shared hit=47682
+                                 Worker 1: actual time=0.077..0.085 rows=0 loops=1372
+                                   Buffers: shared hit=46856
+ Planning Time: 0.374 ms
+ JIT:
+   Functions: 40
+   Options: Inlining false, Optimization false, Expressions true, Deforming true
+   Timing: Generation 5.479 ms, Inlining 0.000 ms, Optimization 2.088 ms, Emission 42.366 ms, Total 49.933 ms
+ Execution Time: 300.802 ms
+(58 rows)
+
+Time: 304.231 ms
+    revenue    
+---------------
+ 35900990.3515
+(1 row)
+
+Time: 280.863 ms

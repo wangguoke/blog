@@ -1,0 +1,10 @@
+ERROR:  relation "idx_supplier_nation_key" already exists
+ERROR:  relation "idx_partsupp_partkey" already exists
+ERROR:  relation "idx_partsupp_suppkey" already exists
+ERROR:  relation "idx_customer_nationkey" already exists
+ERROR:  relation "idx_orders_custkey" already exists
+ERROR:  relation "idx_lineitem_orderkey" already exists
+ERROR:  relation "idx_lineitem_part_supp" already exists
+ERROR:  relation "idx_nation_regionkey" already exists
+ERROR:  relation "idx_lineitem_shipdate" already exists
+ERROR:  relation "idx_orders_orderdate" already exists

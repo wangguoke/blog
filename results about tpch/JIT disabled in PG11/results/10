@@ -1,0 +1,26 @@
+Timing is on.
+ c_custkey |       c_name       |   revenue   | c_acctbal |          n_name           |                c_address                |     c_phone     |                                                    c_comment                                                     
+-----------+--------------------+-------------+-----------+---------------------------+-----------------------------------------+-----------------+------------------------------------------------------------------------------------------------------------------
+    974614 | Customer#000974614 | 846505.8848 |   -372.15 | GERMANY                   | jEGNlHyBzLQIsul4y57KvyMYIUlmsU          | 17-157-740-9395 |  furiously deposits. blithely special forges eat. sile
+   1076482 | Customer#001076482 | 787832.7999 |   2414.12 | JAPAN                     | vioR29aq mcEphOVLcAuv7XVVbgf1c4eucpQ    | 22-832-245-9455 | y fluffily even excuses. fluffily final instructions are blithely carefully i
+   1016872 | Customer#001016872 | 766364.9014 |   8366.35 | MOROCCO                   | akbJmqUotTobbQInBnaCMGnWj9Oy8c5m        | 25-832-990-6352 | aters maintain before the pending, regular requests. regular decoys about the silent, final frets promise slyly
+    555961 | Customer#000555961 | 762070.7143 |    276.28 | CHINA                     | xXZNc4l4LwldR0KYyAr78dXwt               | 28-739-685-8697 | nic courts. bold accounts should integrate 
+    327232 | Customer#000327232 | 761492.9522 |   2344.69 | ARGENTINA                 | p44OLLuqMMMJZwClgDU5                    | 11-676-188-2421 | s grow blithely. packages serv
+    305182 | Customer#000305182 | 754104.1795 |   6559.29 | INDIA                     | BBa5UZRszWn7AKqBsJW4G2jywFExReMK        | 18-602-379-1505 | he unusual, even deposits. even instructions after the 
+    514298 | Customer#000514298 | 743218.9789 |   7745.16 | KENYA                     | BZtOPUiu5Tdz                            | 24-589-151-9980 |  furiously above the even foxes. regular accounts against the blithely ironic deposits are unusual packages. bli
+    304753 | Customer#000304753 | 739574.7719 |    235.56 | FRANCE                    | evuTnf3neLvPf7b69sbsTUkb0UqBuu          | 16-190-264-8587 | de of the silent asymptotes wake blith
+   1048297 | Customer#001048297 | 737847.7088 |   -103.28 | ALGERIA                   | VhXznp31GvCkuxpQ                        | 10-494-955-9277 | thely pending requests after the instructions us
+    517225 | Customer#000517225 | 736198.0675 |   6519.01 | ARGENTINA                 | STYfw5Kr51Z8BRUb5YpLJGoSKDoZNUFzPs      | 11-200-962-3568 | ual accounts affix theodolites: furiously ironic accounts are. evenly fina
+    753253 | Customer#000753253 | 731400.4902 |   -958.03 | IRAN                      | sxq0d9k,PCVl1vcn5sp                     | 20-950-588-8556 | ly even ideas. carefully final pinto beans wake car
+    347569 | Customer#000347569 | 728138.5761 |   3081.12 | BRAZIL                    | JhOFWRVK, x351xgcrmyD                   | 12-736-481-1128 | ccounts above the furiously regular pinto beans haggle slyly
+    758191 | Customer#000758191 | 727539.9691 |    227.42 | BRAZIL                    | Bb4YM38ZkrjYK6wR37sc8L02FPntjRw1m6LAm   | 12-290-974-4176 |  packages are fluffily slyly ironic 
+   1091348 | Customer#001091348 | 727409.1698 |   9209.18 | KENYA                     | F8ZMVU2jPonRqQdOCQt76e HH4y             | 24-477-923-3075 | . slyly regular deposits are slyly bold packages. packages above the carefully unusual waters are acco
+    842824 | Customer#000842824 | 721662.6899 |   4184.68 | ETHIOPIA                  | U921jtWMsPGxMWM                         | 15-394-169-1098 | unts. thin, unusual depths are finally. excuses near the silent instructions are quickly pending requests
+     39364 | Customer#000039364 | 712960.5287 |   2504.85 | JORDAN                    | MNDAthrFW6ios2ujpGFjDMZEHInp 4cIr       | 23-526-818-9821 | epths. even deposits affix carefully against the bold, regular theodolites. car
+   1100743 | Customer#001100743 | 708504.0852 |   4399.00 | INDONESIA                 | uz4bBjBYoA,gjoZ5dhGvsmZNrv5OjCgt        | 19-542-321-2434 | uickly. ironic, even accounts against the ironic pains nag carefull
+    309157 | Customer#000309157 | 707149.1360 |    678.20 | ARGENTINA                 | HCFmX29qi oOTeu3rTBnZt5Gzo7ZD7ITZfoAspb | 11-423-392-5805 | ic deposits wake boldly. special packages nag quickly along 
+    340927 | Customer#000340927 | 703136.0101 |   5494.36 | VIETNAM                   | zBAlyvPH5jtp7YYb7GxXAiD0                | 31-186-984-1193 | . final, final accounts instead of the carefully ironic requests det
+    757405 | Customer#000757405 | 696434.4911 |   -454.95 | SAUDI ARABIA              | WofZ3wKlWdN                             | 30-810-482-5402 | arefully about the furiously ironic accounts. bold, bold ideas wake. enticing accounts are
+(20 rows)
+
+Time: 4802.259 ms (00:04.802)

@@ -1,0 +1,11 @@
+Timing is on.
+CREATE VIEW
+Time: 3.104 ms
+ s_suppkey |          s_name           |          s_address           |     s_phone     | total_revenue 
+-----------+---------------------------+------------------------------+-----------------+---------------
+     46962 | Supplier#000046962        | XaRJRgXKj8wrQiVwx6dDpB4H8tVU | 33-316-183-8423 |  2133080.3850
+(1 row)
+
+Time: 6145.720 ms (00:06.146)
+DROP VIEW
+Time: 0.906 ms

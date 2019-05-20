@@ -1,0 +1,139 @@
+Timing is on.
+          s_name           |             s_address             
+---------------------------+-----------------------------------
+ Supplier#000000062        | bSmlFYUKBeRsqJxwC9 zS6xpFdEf5jNTb
+(1 row)
+
+Time: 122775.717 ms (02:02.776)
+                                                                                                   QUERY PLAN                                                                                                    
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=2923621.20..2923621.20 rows=1 width=51) (actual time=74471.016..74471.096 rows=1 loops=1)
+   Output: supplier.s_name, supplier.s_address
+   Buffers: shared hit=2498924 read=1230312, temp read=103608 written=103695
+   ->  Sort  (cost=2923621.20..2923621.20 rows=1 width=51) (actual time=74471.014..74471.015 rows=1 loops=1)
+         Output: supplier.s_name, supplier.s_address
+         Sort Key: supplier.s_name
+         Sort Method: top-N heapsort  Memory: 25kB
+         Buffers: shared hit=2498924 read=1230312, temp read=103608 written=103695
+         ->  Nested Loop Semi Join  (cost=2674339.05..2923621.19 rows=1 width=51) (actual time=61173.507..74469.653 rows=1799 loops=1)
+               Output: supplier.s_name, supplier.s_address
+               Join Filter: (supplier.s_suppkey = lineitem.l_suppkey)
+               Rows Removed by Join Filter: 178703919
+               Buffers: shared hit=2498924 read=1230312, temp read=103608 written=103695
+               ->  Nested Loop  (cost=0.00..4549.31 rows=4000 width=55) (actual time=0.010..18.923 rows=4029 loops=1)
+                     Output: supplier.s_name, supplier.s_address, supplier.s_suppkey
+                     Join Filter: (supplier.s_nationkey = nation.n_nationkey)
+                     Rows Removed by Join Filter: 95971
+                     Buffers: shared hit=2 read=2297
+                     ->  Seq Scan on public.nation  (cost=0.00..1.31 rows=1 width=4) (actual time=0.005..0.007 rows=1 loops=1)
+                           Output: nation.n_nationkey, nation.n_name, nation.n_regionkey, nation.n_comment
+                           Filter: (nation.n_name = 'ROMANIA'::bpchar)
+                           Rows Removed by Filter: 24
+                           Buffers: shared hit=1
+                     ->  Seq Scan on public.supplier  (cost=0.00..3298.00 rows=100000 width=63) (actual time=0.002..12.542 rows=100000 loops=1)
+                           Output: supplier.s_suppkey, supplier.s_name, supplier.s_address, supplier.s_nationkey, supplier.s_phone, supplier.s_acctbal, supplier.s_comment
+                           Buffers: shared hit=1 read=2297
+               ->  Materialize  (cost=2674339.05..2918891.88 rows=3 width=16) (actual time=13.869..16.406 rows=44355 loops=4029)
+                     Output: partsupp.ps_suppkey, lineitem.l_suppkey
+                     Buffers: shared hit=2498922 read=1228015, temp read=103608 written=103695
+                     ->  Gather  (cost=2674339.05..2918891.87 rows=3 width=16) (actual time=55879.157..61156.890 rows=58830 loops=1)
+                           Output: partsupp.ps_suppkey, lineitem.l_suppkey
+                           Workers Planned: 2
+                           Workers Launched: 2
+                           Buffers: shared hit=2498922 read=1228015, temp read=103608 written=103695
+                           ->  Nested Loop  (cost=2673339.05..2917891.57 rows=1 width=16) (actual time=55914.082..61008.464 rows=19610 loops=3)
+                                 Output: partsupp.ps_suppkey, lineitem.l_suppkey
+                                 Inner Unique: true
+                                 Buffers: shared hit=2498922 read=1228015, temp read=103608 written=103695
+                                 Worker 0: actual time=55931.123..60912.880 rows=17944 loops=1
+                                   Buffers: shared hit=845809 read=388399, temp read=34536 written=34565
+                                 Worker 1: actual time=55932.266..61076.056 rows=17587 loops=1
+                                   Buffers: shared hit=854411 read=378480, temp read=34536 written=34565
+                                 ->  Merge Join  (cost=2673338.62..2907438.86 rows=20239 width=52) (actual time=55914.038..60928.663 rows=19656 loops=3)
+                                       Output: lineitem.l_partkey, lineitem.l_suppkey, ((0.5 * sum(lineitem.l_quantity))), part.p_partkey
+                                       Merge Cond: (part.p_partkey = lineitem.l_partkey)
+                                       Buffers: shared hit=2299916 read=1190924, temp read=103608 written=103695
+                                       Worker 0: actual time=55931.071..60836.449 rows=17995 loops=1
+                                         Buffers: shared hit=785931 read=376222, temp read=34536 written=34565
+                                       Worker 1: actual time=55932.223..61005.563 rows=17617 loops=1
+                                         Buffers: shared hit=794199 read=368160, temp read=34536 written=34565
+                                       ->  Sort  (cost=51946.28..51967.33 rows=8418 width=4) (actual time=1523.621..1524.124 rows=7223 loops=3)
+                                             Output: part.p_partkey
+                                             Sort Key: part.p_partkey
+                                             Sort Method: quicksort  Memory: 788kB
+                                             Buffers: shared hit=15 read=40980
+                                             Worker 0: actual time=1514.159..1514.640 rows=6632 loops=1
+                                               Buffers: shared hit=6 read=12196
+                                             Worker 1: actual time=1514.043..1514.508 rows=6428 loops=1
+                                               Buffers: shared hit=7 read=12401
+                                             ->  Parallel Seq Scan on public.part  (cost=0.00..51397.46 rows=8418 width=4) (actual time=0.431..1518.018 rows=7223 loops=3)
+                                                   Output: part.p_partkey
+                                                   Filter: ((part.p_name)::text ~~ 'almond%'::text)
+                                                   Rows Removed by Filter: 659443
+                                                   Buffers: shared hit=2 read=40979
+                                                   Worker 0: actual time=0.554..1509.201 rows=6632 loops=1
+                                                     Buffers: shared read=12195
+                                                   Worker 1: actual time=0.370..1509.372 rows=6428 loops=1
+                                                     Buffers: shared read=12401
+                                       ->  Materialize  (cost=2621392.34..2843226.45 rows=4808656 width=48) (actual time=54335.835..59070.015 rows=5442839 loops=3)
+                                             Output: lineitem.l_partkey, lineitem.l_suppkey, ((0.5 * sum(lineitem.l_quantity)))
+                                             Buffers: shared hit=2299901 read=1149944, temp read=103608 written=103695
+                                             Worker 0: actual time=54335.569..58979.370 rows=5443856 loops=1
+                                               Buffers: shared hit=785925 read=364026, temp read=34536 written=34565
+                                             Worker 1: actual time=54336.056..59153.643 rows=5441501 loops=1
+                                               Buffers: shared hit=794192 read=355759, temp read=34536 written=34565
+                                             ->  GroupAggregate  (cost=2621392.34..2783118.25 rows=4808656 width=48) (actual time=54335.826..58513.272 rows=5442839 loops=3)
+                                                   Output: lineitem.l_partkey, lineitem.l_suppkey, (0.5 * sum(lineitem.l_quantity))
+                                                   Group Key: lineitem.l_partkey, lineitem.l_suppkey
+                                                   Buffers: shared hit=2299901 read=1149944, temp read=103608 written=103695
+                                                   Worker 0: actual time=54335.558..58413.350 rows=5443856 loops=1
+                                                     Buffers: shared hit=785925 read=364026, temp read=34536 written=34565
+                                                   Worker 1: actual time=54336.048..58592.931 rows=5441501 loops=1
+                                                     Buffers: shared hit=794192 read=355759, temp read=34536 written=34565
+                                                   ->  Sort  (cost=2621392.34..2643791.36 rows=8959607 width=21) (actual time=54335.796..55755.413 rows=9104634 loops=3)
+                                                         Output: lineitem.l_partkey, lineitem.l_suppkey, lineitem.l_quantity
+                                                         Sort Key: lineitem.l_partkey, lineitem.l_suppkey
+                                                         Sort Method: external merge  Disk: 276288kB
+                                                         Buffers: shared hit=2299901 read=1149944, temp read=103608 written=103695
+                                                         Worker 0: actual time=54335.510..55712.195 rows=9106335 loops=1
+                                                           Buffers: shared hit=785925 read=364026, temp read=34536 written=34565
+                                                         Worker 1: actual time=54336.018..55787.076 rows=9102390 loops=1
+                                                           Buffers: shared hit=794192 read=355759, temp read=34536 written=34565
+                                                         ->  Bitmap Heap Scan on public.lineitem  (cost=129786.54..1479160.64 rows=8959607 width=21) (actual time=1710.028..50318.645 rows=9106637 loops=3)
+                                                               Output: lineitem.l_partkey, lineitem.l_suppkey, lineitem.l_quantity
+                                                               Recheck Cond: ((lineitem.l_shipdate >= '1995-01-01'::date) AND (lineitem.l_shipdate < '1996-01-01 00:00:00'::timestamp without time zone))
+                                                               Rows Removed by Index Recheck: 32085298
+                                                               Heap Blocks: exact=321610 lossy=793438
+                                                               Buffers: shared hit=2299887 read=1149944
+                                                               Worker 0: actual time=1711.366..50316.497 rows=9106637 loops=1
+                                                                 Buffers: shared hit=785918 read=364026
+                                                               Worker 1: actual time=1711.212..50323.664 rows=9106637 loops=1
+                                                                 Buffers: shared hit=794185 read=355759
+                                                               ->  Bitmap Index Scan on idx_lineitem_shipdate  (cost=0.00..127546.64 rows=8959607 width=0) (actual time=1607.286..1607.286 rows=9106637 loops=3)
+                                                                     Index Cond: ((lineitem.l_shipdate >= '1995-01-01'::date) AND (lineitem.l_shipdate < '1996-01-01 00:00:00'::timestamp without time zone))
+                                                                     Buffers: shared hit=69791 read=34896
+                                                                     Worker 0: actual time=1607.310..1607.310 rows=9106637 loops=1
+                                                                       Buffers: shared hit=31209 read=3687
+                                                                     Worker 1: actual time=1607.254..1607.254 rows=9106637 loops=1
+                                                                       Buffers: shared hit=31712 read=3184
+                                 ->  Index Scan using partsupp_pkey on public.partsupp  (cost=0.43..0.51 rows=1 width=20) (actual time=0.004..0.004 rows=1 loops=58968)
+                                       Output: partsupp.ps_partkey, partsupp.ps_suppkey, partsupp.ps_availqty, partsupp.ps_supplycost, partsupp.ps_comment
+                                       Index Cond: ((partsupp.ps_partkey = lineitem.l_partkey) AND (partsupp.ps_suppkey = lineitem.l_suppkey))
+                                       Filter: ((partsupp.ps_availqty)::numeric > ((0.5 * sum(lineitem.l_quantity))))
+                                       Rows Removed by Filter: 0
+                                       Buffers: shared hit=199006 read=37091
+                                       Worker 0: actual time=0.004..0.004 rows=1 loops=17995
+                                         Buffers: shared hit=59878 read=12177
+                                       Worker 1: actual time=0.004..0.004 rows=1 loops=17617
+                                         Buffers: shared hit=60212 read=10320
+ Planning time: 4.317 ms
+ Execution time: 74515.636 ms
+(121 rows)
+
+Time: 74532.321 ms (01:14.532)
+          s_name           |             s_address             
+---------------------------+-----------------------------------
+ Supplier#000000062        | bSmlFYUKBeRsqJxwC9 zS6xpFdEf5jNTb
+(1 row)
+
+Time: 24445.530 ms (00:24.446)

@@ -1,0 +1,7 @@
+Timing is on.
+  p_brand   |          p_type          | p_size | supplier_cnt 
+------------+--------------------------+--------+--------------
+ Brand#55   | ECONOMY BURNISHED NICKEL |     21 |          104
+(1 row)
+
+Time: 4182.305 ms (00:04.182)

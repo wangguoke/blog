@@ -1,0 +1,139 @@
+Timing is on.
+ l_orderkey |   revenue   | o_orderdate | o_shippriority 
+------------+-------------+-------------+----------------
+   16716836 | 457530.6898 | 1995-01-28  |              0
+   49108805 | 437309.8833 | 1995-02-24  |              0
+   59180740 | 424083.7684 | 1995-02-04  |              0
+   26812736 | 422055.4106 | 1995-02-27  |              0
+   35934054 | 421764.6152 | 1995-02-17  |              0
+   19938211 | 421534.7725 | 1995-02-16  |              0
+   44247173 | 421467.1845 | 1995-02-14  |              0
+   10666915 | 415306.2064 | 1995-02-14  |              0
+   23005989 | 413233.6425 | 1995-01-22  |              0
+   37307463 | 411723.9522 | 1995-02-06  |              0
+(10 rows)
+
+Time: 51775.069 ms (00:51.775)
+                                                                                                                     QUERY PLAN                                                                                                                      
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=2915368.47..2915368.50 rows=10 width=48) (actual time=54323.440..54410.373 rows=10 loops=1)
+   Output: lineitem.l_orderkey, (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))), orders.o_orderdate, orders.o_shippriority
+   Buffers: shared hit=773256 read=1440799, temp read=136724 written=136706
+   ->  Sort  (cost=2915368.47..2922997.98 rows=3051805 width=48) (actual time=54323.439..54323.439 rows=10 loops=1)
+         Output: lineitem.l_orderkey, (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))), orders.o_orderdate, orders.o_shippriority
+         Sort Key: (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))) DESC, orders.o_orderdate
+         Sort Method: top-N heapsort  Memory: 26kB
+         Buffers: shared hit=204930 read=537818, temp read=46042 written=46036
+         ->  Finalize GroupAggregate  (cost=2447790.40..2849420.06 rows=3051805 width=48) (actual time=54164.663..54307.958 rows=113535 loops=1)
+               Output: lineitem.l_orderkey, sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))), orders.o_orderdate, orders.o_shippriority
+               Group Key: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority
+               Buffers: shared hit=204930 read=537818, temp read=46042 written=46036
+               ->  Gather Merge  (cost=2447790.40..2779482.87 rows=2543170 width=48) (actual time=54164.649..54331.212 rows=118107 loops=1)
+                     Output: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority, (PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+                     Workers Planned: 2
+                     Workers Launched: 2
+                     Buffers: shared hit=773256 read=1440799, temp read=136724 written=136706
+                     ->  Partial GroupAggregate  (cost=2446790.38..2484937.93 rows=1271585 width=48) (actual time=54008.802..54061.720 rows=39369 loops=3)
+                           Output: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority, PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))
+                           Group Key: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority
+                           Buffers: shared hit=773256 read=1440799, temp read=136724 written=136706
+                           Worker 0: actual time=53956.903..54010.688 rows=38887 loops=1
+                             Buffers: shared hit=283401 read=452066, temp read=45311 written=45305
+                           Worker 1: actual time=53906.408..53959.654 rows=39119 loops=1
+                             Buffers: shared hit=284925 read=450915, temp read=45371 written=45365
+                           ->  Sort  (cost=2446790.38..2449969.34 rows=1271585 width=28) (actual time=54008.774..54012.668 rows=99650 loops=3)
+                                 Output: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority, lineitem.l_extendedprice, lineitem.l_discount
+                                 Sort Key: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority
+                                 Sort Method: quicksort  Memory: 11023kB
+                                 Buffers: shared hit=773256 read=1440799, temp read=136724 written=136706
+                                 Worker 0: actual time=53956.876..53960.703 rows=98348 loops=1
+                                   Buffers: shared hit=283401 read=452066, temp read=45311 written=45305
+                                 Worker 1: actual time=53906.377..53910.166 rows=98836 loops=1
+                                   Buffers: shared hit=284925 read=450915, temp read=45371 written=45365
+                                 ->  Hash Join  (cost=543760.98..2300042.48 rows=1271585 width=28) (actual time=17083.759..53963.953 rows=99650 loops=3)
+                                       Output: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority, lineitem.l_extendedprice, lineitem.l_discount
+                                       Hash Cond: (lineitem.l_orderkey = orders.o_orderkey)
+                                       Buffers: shared hit=773214 read=1440799, temp read=136724 written=136706
+                                       Worker 0: actual time=17109.052..53915.455 rows=98348 loops=1
+                                         Buffers: shared hit=283380 read=452066, temp read=45311 written=45305
+                                       Worker 1: actual time=17108.487..53865.108 rows=98836 loops=1
+                                         Buffers: shared hit=284904 read=450915, temp read=45371 written=45365
+                                       ->  Parallel Seq Scan on public.lineitem  (cost=0.00..1527398.60 rows=13529345 width=20) (actual time=0.199..28809.966 rows=10886409 loops=3)
+                                             Output: lineitem.l_orderkey, lineitem.l_extendedprice, lineitem.l_discount
+                                             Filter: (lineitem.l_shipdate > '1995-03-02'::date)
+                                             Rows Removed by Filter: 9108942
+                                             Buffers: shared hit=97 read=1214883
+                                             Worker 0: actual time=0.237..28672.478 rows=10819222 loops=1
+                                               Buffers: shared hit=30 read=402391
+                                             Worker 1: actual time=0.349..28384.970 rows=10831386 loops=1
+                                               Buffers: shared hit=29 read=402765
+                                       ->  Hash  (cost=519254.48..519254.48 rows=1409800 width=12) (actual time=17078.766..17078.766 rows=1442142 loops=3)
+                                             Output: orders.o_orderdate, orders.o_shippriority, orders.o_orderkey
+                                             Buckets: 1048576  Batches: 4  Memory Usage: 23622kB
+                                             Buffers: shared hit=773035 read=225916, temp written=12687
+                                             Worker 0: actual time=17102.750..17102.750 rows=1442142 loops=1
+                                               Buffers: shared hit=283309 read=49675, temp written=4229
+                                             Worker 1: actual time=17102.749..17102.749 rows=1442142 loops=1
+                                               Buffers: shared hit=284834 read=48150, temp written=4229
+                                             ->  Hash Join  (cost=135844.50..519254.48 rows=1409800 width=12) (actual time=1118.056..16751.563 rows=1442142 loops=3)
+                                                   Output: orders.o_orderdate, orders.o_shippriority, orders.o_orderkey
+                                                   Inner Unique: true
+                                                   Hash Cond: (orders.o_custkey = customer.c_custkey)
+                                                   Buffers: shared hit=773035 read=225916
+                                                   Worker 0: actual time=1122.512..16768.965 rows=1442142 loops=1
+                                                     Buffers: shared hit=283309 read=49675
+                                                   Worker 1: actual time=1122.641..16772.986 rows=1442142 loops=1
+                                                     Buffers: shared hit=284834 read=48150
+                                                   ->  Bitmap Heap Scan on public.orders  (cost=76299.47..441106.54 rows=7086805 width=20) (actual time=852.928..14603.093 rows=7207979 loops=3)
+                                                         Output: orders.o_orderkey, orders.o_custkey, orders.o_orderstatus, orders.o_totalprice, orders.o_orderdate, orders.o_orderpriority, orders.o_clerk, orders.o_shippriority, orders.o_comment
+                                                         Recheck Cond: (orders.o_orderdate < '1995-03-02'::date)
+                                                         Heap Blocks: exact=276222
+                                                         Buffers: shared hit=661840 read=225916
+                                                         Worker 0: actual time=834.737..14609.720 rows=7207979 loops=1
+                                                           Buffers: shared hit=246244 read=49675
+                                                         Worker 1: actual time=834.867..14604.025 rows=7207979 loops=1
+                                                           Buffers: shared hit=247769 read=48150
+                                                         ->  Bitmap Index Scan on idx_orders_orderdate  (cost=0.00..74527.77 rows=7086805 width=0) (actual time=788.592..788.592 rows=7207979 loops=3)
+                                                               Index Cond: (orders.o_orderdate < '1995-03-02'::date)
+                                                               Buffers: shared hit=39434 read=19656
+                                                               Worker 0: actual time=770.127..770.127 rows=7207979 loops=1
+                                                                 Buffers: shared hit=19697
+                                                               Worker 1: actual time=770.127..770.127 rows=7207979 loops=1
+                                                                 Buffers: shared hit=19697
+                                                   ->  Hash  (cost=55815.03..55815.03 rows=298400 width=4) (actual time=263.729..263.729 rows=299496 loops=3)
+                                                         Output: customer.c_custkey
+                                                         Buckets: 524288  Batches: 1  Memory Usage: 14626kB
+                                                         Buffers: shared hit=111195
+                                                         Worker 0: actual time=286.013..286.013 rows=299496 loops=1
+                                                           Buffers: shared hit=37065
+                                                         Worker 1: actual time=286.018..286.018 rows=299496 loops=1
+                                                           Buffers: shared hit=37065
+                                                         ->  Seq Scan on public.customer  (cost=0.00..55815.03 rows=298400 width=4) (actual time=0.031..212.519 rows=299496 loops=3)
+                                                               Output: customer.c_custkey
+                                                               Filter: (customer.c_mktsegment = 'FURNITURE'::bpchar)
+                                                               Rows Removed by Filter: 1200504
+                                                               Buffers: shared hit=111195
+                                                               Worker 0: actual time=0.036..234.199 rows=299496 loops=1
+                                                                 Buffers: shared hit=37065
+                                                               Worker 1: actual time=0.041..233.746 rows=299496 loops=1
+                                                                 Buffers: shared hit=37065
+ Planning time: 6.296 ms
+ Execution time: 54410.604 ms
+(103 rows)
+
+Time: 54429.258 ms (00:54.429)
+ l_orderkey |   revenue   | o_orderdate | o_shippriority 
+------------+-------------+-------------+----------------
+   16716836 | 457530.6898 | 1995-01-28  |              0
+   49108805 | 437309.8833 | 1995-02-24  |              0
+   59180740 | 424083.7684 | 1995-02-04  |              0
+   26812736 | 422055.4106 | 1995-02-27  |              0
+   35934054 | 421764.6152 | 1995-02-17  |              0
+   19938211 | 421534.7725 | 1995-02-16  |              0
+   44247173 | 421467.1845 | 1995-02-14  |              0
+   10666915 | 415306.2064 | 1995-02-14  |              0
+   23005989 | 413233.6425 | 1995-01-22  |              0
+   37307463 | 411723.9522 | 1995-02-06  |              0
+(10 rows)
+
+Time: 16459.102 ms (00:16.459)

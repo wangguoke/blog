@@ -1,0 +1,80 @@
+Timing is on.
+ o_orderpriority | order_count 
+-----------------+-------------
+ 1-URGENT        |      105623
+(1 row)
+
+Time: 38328.621 ms (00:38.329)
+                                                                                                                                                                                                QUERY PLAN                                                                                                                                                                                                
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=457235.46..457244.87 rows=1 width=24) (actual time=5097.603..5186.645 rows=1 loops=1)
+   Output: orders.o_orderpriority, (count(*))
+   Buffers: shared hit=2325279 read=793580
+   ->  Finalize GroupAggregate  (cost=457235.46..457282.52 rows=5 width=24) (actual time=5097.603..5097.603 rows=1 loops=1)
+         Output: orders.o_orderpriority, count(*)
+         Group Key: orders.o_orderpriority
+         Buffers: shared hit=878912 read=305708
+         ->  Gather Merge  (cost=457235.46..457282.42 rows=10 width=24) (actual time=5092.883..5186.637 rows=4 loops=1)
+               Output: orders.o_orderpriority, (PARTIAL count(*))
+               Workers Planned: 2
+               Workers Launched: 2
+               Buffers: shared hit=2325279 read=793580
+               ->  Partial GroupAggregate  (cost=456235.44..456281.24 rows=5 width=24) (actual time=5078.260..5088.043 rows=3 loops=3)
+                     Output: orders.o_orderpriority, PARTIAL count(*)
+                     Group Key: orders.o_orderpriority
+                     Buffers: shared hit=2325279 read=793580
+                     Worker 0: actual time=5069.992..5082.442 rows=4 loops=1
+                       Buffers: shared hit=724799 read=244737
+                     Worker 1: actual time=5072.156..5084.348 rows=4 loops=1
+                       Buffers: shared hit=721568 read=243135
+                     ->  Sort  (cost=456235.44..456250.69 rows=6101 width=16) (actual time=5074.042..5079.069 rows=113884 loops=3)
+                           Output: orders.o_orderpriority
+                           Sort Key: orders.o_orderpriority
+                           Sort Method: quicksort  Memory: 15499kB
+                           Worker 0:  Sort Method: quicksort  Memory: 13815kB
+                           Worker 1:  Sort Method: quicksort  Memory: 13781kB
+                           Buffers: shared hit=2325279 read=793580
+                           Worker 0: actual time=5066.045..5072.151 rows=131067 loops=1
+                             Buffers: shared hit=724799 read=244737
+                           Worker 1: actual time=5068.298..5074.035 rows=130346 loops=1
+                             Buffers: shared hit=721568 read=243135
+                           ->  Nested Loop Semi Join  (cost=7613.80..455851.84 rows=6101 width=16) (actual time=152.446..5019.466 rows=175371 loops=3)
+                                 Output: orders.o_orderpriority
+                                 Buffers: shared hit=2325266 read=793579
+                                 Worker 0: actual time=146.721..5015.733 rows=163634 loops=1
+                                   Buffers: shared hit=724793 read=244736
+                                 Worker 1: actual time=147.472..5016.501 rows=162914 loops=1
+                                   Buffers: shared hit=721561 read=243135
+                                 ->  Parallel Bitmap Heap Scan on public.orders  (cost=7613.23..287421.45 rows=239081 width=20) (actual time=151.962..896.472 rows=191110 loops=3)
+                                       Output: orders.o_orderkey, orders.o_custkey, orders.o_orderstatus, orders.o_totalprice, orders.o_orderdate, orders.o_orderpriority, orders.o_clerk, orders.o_shippriority, orders.o_comment
+                                       Recheck Cond: ((orders.o_orderdate >= '1993-03-01'::date) AND (orders.o_orderdate < '1993-06-01 00:00:00'::timestamp without time zone))
+                                       Heap Blocks: exact=92075
+                                       Buffers: shared hit=2 read=244539
+                                       Worker 0: actual time=146.390..887.335 rows=178282 loops=1
+                                         Buffers: shared read=75739
+                                       Worker 1: actual time=146.390..891.605 rows=177445 loops=1
+                                         Buffers: shared read=75157
+                                       ->  Bitmap Index Scan on idx_orders_orderdate  (cost=0.00..7469.79 rows=573795 width=0) (actual time=114.792..114.792 rows=573330 loops=1)
+                                             Index Cond: ((orders.o_orderdate >= '1993-03-01'::date) AND (orders.o_orderdate < '1993-06-01 00:00:00'::timestamp without time zone))
+                                             Buffers: shared read=1570
+                                 ->  Index Scan using idx_lineitem_orderkey on public.lineitem  (cost=0.56..7.62 rows=52 width=8) (actual time=0.021..0.021 rows=1 loops=573330)
+                                       Output: lineitem.l_orderkey, lineitem.l_partkey, lineitem.l_suppkey, lineitem.l_linenumber, lineitem.l_quantity, lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_tax, lineitem.l_returnflag, lineitem.l_linestatus, lineitem.l_shipdate, lineitem.l_commitdate, lineitem.l_receiptdate, lineitem.l_shipinstruct, lineitem.l_shipmode, lineitem.l_comment
+                                       Index Cond: (lineitem.l_orderkey = orders.o_orderkey)
+                                       Filter: (lineitem.l_commitdate < lineitem.l_receiptdate)
+                                       Rows Removed by Filter: 1
+                                       Buffers: shared hit=2325264 read=549040
+                                       Worker 0: actual time=0.023..0.023 rows=1 loops=178282
+                                         Buffers: shared hit=724793 read=168997
+                                       Worker 1: actual time=0.023..0.023 rows=1 loops=177445
+                                         Buffers: shared hit=721561 read=167978
+ Planning Time: 2.195 ms
+ Execution Time: 5187.560 ms
+(62 rows)
+
+Time: 5197.190 ms (00:05.197)
+ o_orderpriority | order_count 
+-----------------+-------------
+ 1-URGENT        |      105623
+(1 row)
+
+Time: 2146.653 ms (00:02.147)

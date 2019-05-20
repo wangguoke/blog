@@ -1,0 +1,171 @@
+Timing is on.
+ o_year |       mkt_share        
+--------+------------------------
+   1995 | 0.04102070378326889052
+(1 row)
+
+Time: 14111.022 ms (00:14.111)
+                                                                                                                                                                                                                     QUERY PLAN                                                                                                                                                                                                                     
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=610446.55..610446.85 rows=1 width=40) (actual time=6771.807..6873.104 rows=1 loops=1)
+   Output: (date_part('year'::text, (orders.o_orderdate)::timestamp without time zone)), ((sum(CASE WHEN (n2.n_name = 'RUSSIA'::bpchar) THEN (lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)) ELSE '0'::numeric END) / sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))))
+   Buffers: shared hit=1605978 read=547389
+   ->  Finalize GroupAggregate  (cost=610446.55..611165.54 rows=2406 width=40) (actual time=6257.841..6257.841 rows=1 loops=1)
+         Output: (date_part('year'::text, (orders.o_orderdate)::timestamp without time zone)), (sum(CASE WHEN (n2.n_name = 'RUSSIA'::bpchar) THEN (lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)) ELSE '0'::numeric END) / sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+         Group Key: (date_part('year'::text, (orders.o_orderdate)::timestamp without time zone))
+         Buffers: shared hit=882378 read=297535
+         ->  Gather Merge  (cost=610446.55..611081.33 rows=2406 width=72) (actual time=6254.000..6358.632 rows=3 loops=1)
+               Output: (date_part('year'::text, (orders.o_orderdate)::timestamp without time zone)), (PARTIAL sum(CASE WHEN (n2.n_name = 'RUSSIA'::bpchar) THEN (lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)) ELSE '0'::numeric END)), (PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+               Workers Planned: 1
+               Workers Launched: 1
+               Buffers: shared hit=1605978 read=547389
+               ->  Partial GroupAggregate  (cost=609446.54..609810.65 rows=2406 width=72) (actual time=6232.661..6236.402 rows=2 loops=2)
+                     Output: (date_part('year'::text, (orders.o_orderdate)::timestamp without time zone)), PARTIAL sum(CASE WHEN (n2.n_name = 'RUSSIA'::bpchar) THEN (lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)) ELSE '0'::numeric END), PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))
+                     Group Key: (date_part('year'::text, (orders.o_orderdate)::timestamp without time zone))
+                     Buffers: shared hit=1605978 read=547389
+                     Worker 0: actual time=6211.751..6215.413 rows=2 loops=1
+                       Buffers: shared hit=723600 read=249854
+                     ->  Sort  (cost=609446.54..609481.65 rows=14044 width=46) (actual time=6228.822..6229.576 rows=12311 loops=2)
+                           Output: (date_part('year'::text, (orders.o_orderdate)::timestamp without time zone)), n2.n_name, lineitem.l_extendedprice, lineitem.l_discount
+                           Sort Key: (date_part('year'::text, (orders.o_orderdate)::timestamp without time zone))
+                           Sort Method: quicksort  Memory: 1366kB
+                           Worker 0:  Sort Method: quicksort  Memory: 1326kB
+                           Buffers: shared hit=1605978 read=547389
+                           Worker 0: actual time=6208.025..6208.748 rows=12055 loops=1
+                             Buffers: shared hit=723600 read=249854
+                           ->  Hash Join  (cost=605200.39..608479.07 rows=14044 width=46) (actual time=6135.166..6223.432 rows=12311 loops=2)
+                                 Output: date_part('year'::text, (orders.o_orderdate)::timestamp without time zone), n2.n_name, lineitem.l_extendedprice, lineitem.l_discount
+                                 Inner Unique: true
+                                 Hash Cond: (supplier.s_nationkey = n2.n_nationkey)
+                                 Buffers: shared hit=1605971 read=547389
+                                 Worker 0: actual time=6114.140..6202.960 rows=12055 loops=1
+                                   Buffers: shared hit=723593 read=249854
+                                 ->  Parallel Hash Join  (cost=605198.82..608364.17 rows=14044 width=24) (actual time=5844.746..5927.155 rows=12311 loops=2)
+                                       Output: lineitem.l_extendedprice, lineitem.l_discount, supplier.s_nationkey, orders.o_orderdate
+                                       Hash Cond: (supplier.s_suppkey = lineitem.l_suppkey)
+                                       Buffers: shared hit=1605955 read=547389
+                                       Worker 0: actual time=5533.350..5616.460 rows=12055 loops=1
+                                         Buffers: shared hit=723578 read=249854
+                                       ->  Parallel Seq Scan on public.supplier  (cost=0.00..2886.24 rows=58824 width=12) (actual time=0.173..64.096 rows=50000 loops=2)
+                                             Output: supplier.s_suppkey, supplier.s_name, supplier.s_address, supplier.s_nationkey, supplier.s_phone, supplier.s_acctbal, supplier.s_comment
+                                             Buffers: shared hit=2 read=2296
+                                             Worker 0: actual time=0.030..64.796 rows=49041 loops=1
+                                               Buffers: shared hit=2 read=1125
+                                       ->  Parallel Hash  (cost=605074.47..605074.47 rows=9948 width=24) (actual time=5844.206..5844.206 rows=12311 loops=2)
+                                             Output: lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_suppkey, orders.o_orderdate
+                                             Buckets: 32768  Batches: 1  Memory Usage: 1824kB
+                                             Buffers: shared hit=1605945 read=545093
+                                             Worker 0: actual time=5533.199..5533.199 rows=12129 loops=1
+                                               Buffers: shared hit=723568 read=248729
+                                             ->  Hash Join  (cost=558922.88..605074.47 rows=9948 width=24) (actual time=4340.204..5833.433 rows=12311 loops=2)
+                                                   Output: lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_suppkey, orders.o_orderdate
+                                                   Hash Cond: (customer.c_nationkey = n1.n_nationkey)
+                                                   Buffers: shared hit=1605945 read=545093
+                                                   Worker 0: actual time=4029.247..5521.849 rows=12129 loops=1
+                                                     Buffers: shared hit=723568 read=248729
+                                                   ->  Parallel Hash Join  (cost=558920.37..604785.96 rows=49740 width=32) (actual time=4340.156..5817.342 rows=61303 loops=2)
+                                                         Output: lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_suppkey, orders.o_orderdate, customer.c_nationkey
+                                                         Hash Cond: (customer.c_custkey = orders.o_custkey)
+                                                         Buffers: shared hit=1605941 read=545093
+                                                         Worker 0: actual time=4029.193..5505.690 rows=60601 loops=1
+                                                           Buffers: shared hit=723566 read=248729
+                                                         ->  Parallel Seq Scan on public.customer  (cost=0.00..43314.70 rows=624970 width=12) (actual time=0.105..1147.674 rows=750000 loops=2)
+                                                               Output: customer.c_custkey, customer.c_name, customer.c_address, customer.c_nationkey, customer.c_phone, customer.c_acctbal, customer.c_mktsegment, customer.c_comment
+                                                               Buffers: shared hit=2 read=37063
+                                                               Worker 0: actual time=0.206..1153.227 rows=738314 loops=1
+                                                                 Buffers: shared hit=1 read=18246
+                                                         ->  Parallel Hash  (cost=558298.62..558298.62 rows=49740 width=32) (actual time=4339.717..4339.717 rows=61303 loops=2)
+                                                               Output: lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_suppkey, orders.o_orderdate, orders.o_custkey
+                                                               Buckets: 131072  Batches: 1  Memory Usage: 9696kB
+                                                               Buffers: shared hit=1605939 read=508030
+                                                               Worker 0: actual time=4028.874..4028.874 rows=55347 loops=1
+                                                                 Buffers: shared hit=723565 read=230483
+                                                               ->  Nested Loop  (cost=1.00..558298.62 rows=49740 width=32) (actual time=0.257..4314.045 rows=61303 loops=2)
+                                                                     Output: lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_suppkey, orders.o_orderdate, orders.o_custkey
+                                                                     Inner Unique: true
+                                                                     Buffers: shared hit=1605939 read=508030
+                                                                     Worker 0: actual time=0.254..4005.905 rows=55347 loops=1
+                                                                       Buffers: shared hit=723565 read=230483
+                                                                     ->  Nested Loop  (cost=0.56..235625.16 rows=166101 width=28) (actual time=0.226..3217.834 rows=201567 loops=2)
+                                                                           Output: lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_suppkey, lineitem.l_orderkey
+                                                                           Buffers: shared hit=128607 read=370918
+                                                                           Worker 0: actual time=0.217..2879.777 rows=181923 loops=1
+                                                                             Buffers: shared hit=57587 read=167870
+                                                                           ->  Parallel Seq Scan on public.part  (cost=0.00..51397.76 rows=5539 width=4) (actual time=0.172..141.790 rows=6728 loops=2)
+                                                                                 Output: part.p_partkey, part.p_name, part.p_mfgr, part.p_brand, part.p_type, part.p_size, part.p_container, part.p_retailprice, part.p_comment
+                                                                                 Filter: ((part.p_type)::text = 'STANDARD PLATED TIN'::text)
+                                                                                 Rows Removed by Filter: 993272
+                                                                                 Buffers: shared hit=2 read=40979
+                                                                                 Worker 0: actual time=0.138..136.248 rows=6073 loops=1
+                                                                                   Buffers: shared read=18529
+                                                                           ->  Index Scan using idx_lineitem_part_supp on public.lineitem  (cost=0.56..32.93 rows=33 width=36) (actual time=0.026..0.454 rows=30 loops=13457)
+                                                                                 Output: lineitem.l_orderkey, lineitem.l_partkey, lineitem.l_suppkey, lineitem.l_linenumber, lineitem.l_quantity, lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_tax, lineitem.l_returnflag, lineitem.l_linestatus, lineitem.l_shipdate, lineitem.l_commitdate, lineitem.l_receiptdate, lineitem.l_shipinstruct, lineitem.l_shipmode, lineitem.l_comment
+                                                                                 Index Cond: (lineitem.l_partkey = part.p_partkey)
+                                                                                 Buffers: shared hit=128605 read=329939
+                                                                                 Worker 0: actual time=0.021..0.449 rows=30 loops=6073
+                                                                                   Buffers: shared hit=57587 read=149341
+                                                                     ->  Index Scan using orders_pkey on public.orders  (cost=0.43..1.94 rows=1 width=16) (actual time=0.005..0.005 rows=0 loops=403134)
+                                                                           Output: orders.o_orderkey, orders.o_custkey, orders.o_orderstatus, orders.o_totalprice, orders.o_orderdate, orders.o_orderpriority, orders.o_clerk, orders.o_shippriority, orders.o_comment
+                                                                           Index Cond: (orders.o_orderkey = lineitem.l_orderkey)
+                                                                           Filter: ((orders.o_orderdate >= '1995-01-01'::date) AND (orders.o_orderdate <= '1996-12-31'::date))
+                                                                           Rows Removed by Filter: 1
+                                                                           Buffers: shared hit=1477332 read=137112
+                                                                           Worker 0: actual time=0.006..0.006 rows=0 loops=181923
+                                                                             Buffers: shared hit=665978 read=62613
+                                                   ->  Hash  (cost=2.45..2.45 rows=5 width=4) (actual time=0.033..0.033 rows=5 loops=2)
+                                                         Output: n1.n_nationkey
+                                                         Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                                         Buffers: shared hit=4
+                                                         Worker 0: actual time=0.046..0.046 rows=5 loops=1
+                                                           Buffers: shared hit=2
+                                                         ->  Hash Join  (cost=1.07..2.45 rows=5 width=4) (actual time=0.029..0.032 rows=5 loops=2)
+                                                               Output: n1.n_nationkey
+                                                               Inner Unique: true
+                                                               Hash Cond: (n1.n_regionkey = region.r_regionkey)
+                                                               Buffers: shared hit=4
+                                                               Worker 0: actual time=0.041..0.044 rows=5 loops=1
+                                                                 Buffers: shared hit=2
+                                                               ->  Seq Scan on public.nation n1  (cost=0.00..1.25 rows=25 width=12) (actual time=0.003..0.004 rows=25 loops=2)
+                                                                     Output: n1.n_nationkey, n1.n_name, n1.n_regionkey, n1.n_comment
+                                                                     Buffers: shared hit=2
+                                                                     Worker 0: actual time=0.004..0.005 rows=25 loops=1
+                                                                       Buffers: shared hit=1
+                                                               ->  Hash  (cost=1.06..1.06 rows=1 width=4) (actual time=0.020..0.020 rows=1 loops=2)
+                                                                     Output: region.r_regionkey
+                                                                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                                                     Buffers: shared hit=2
+                                                                     Worker 0: actual time=0.032..0.032 rows=1 loops=1
+                                                                       Buffers: shared hit=1
+                                                                     ->  Seq Scan on public.region  (cost=0.00..1.06 rows=1 width=4) (actual time=0.018..0.018 rows=1 loops=2)
+                                                                           Output: region.r_regionkey
+                                                                           Filter: (region.r_name = 'EUROPE'::bpchar)
+                                                                           Rows Removed by Filter: 4
+                                                                           Buffers: shared hit=2
+                                                                           Worker 0: actual time=0.030..0.030 rows=1 loops=1
+                                                                             Buffers: shared hit=1
+                                 ->  Hash  (cost=1.25..1.25 rows=25 width=30) (actual time=290.357..290.357 rows=25 loops=2)
+                                       Output: n2.n_name, n2.n_nationkey
+                                       Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                       Buffers: shared hit=2
+                                       Worker 0: actual time=580.689..580.690 rows=25 loops=1
+                                         Buffers: shared hit=1
+                                       ->  Seq Scan on public.nation n2  (cost=0.00..1.25 rows=25 width=30) (actual time=290.341..290.346 rows=25 loops=2)
+                                             Output: n2.n_name, n2.n_nationkey
+                                             Buffers: shared hit=2
+                                             Worker 0: actual time=580.665..580.673 rows=25 loops=1
+                                               Buffers: shared hit=1
+ Planning Time: 4.547 ms
+ JIT:
+   Functions: 160
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 15.551 ms, Inlining 46.630 ms, Optimization 645.259 ms, Emission 401.821 ms, Total 1109.262 ms
+ Execution Time: 6879.344 ms
+(153 rows)
+
+Time: 6887.895 ms (00:06.888)
+ o_year |       mkt_share        
+--------+------------------------
+   1995 | 0.04102070378326889052
+(1 row)
+
+Time: 3436.600 ms (00:03.437)

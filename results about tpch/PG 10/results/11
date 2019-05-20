@@ -1,0 +1,6 @@
+Timing is on.
+ ps_partkey | value 
+------------+-------
+(0 rows)
+
+Time: 857.741 ms

@@ -1,0 +1,127 @@
+Timing is on.
+CREATE VIEW
+Time: 31.941 ms
+ s_suppkey |          s_name           |          s_address           |     s_phone     | total_revenue 
+-----------+---------------------------+------------------------------+-----------------+---------------
+     46962 | Supplier#000046962        | XaRJRgXKj8wrQiVwx6dDpB4H8tVU | 33-316-183-8423 |  2133080.3850
+(1 row)
+
+Time: 8365.764 ms (00:08.366)
+                                                                                                                                                                                                                 QUERY PLAN                                                                                                                                                                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=3055232.61..3055289.72 rows=1 width=103) (actual time=5785.039..5857.503 rows=1 loops=1)
+   Output: supplier.s_suppkey, supplier.s_name, supplier.s_address, supplier.s_phone, (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+   Buffers: shared hit=24 read=974310
+   InitPlan 1 (returns $1)
+     ->  Aggregate  (cost=1541541.68..1541541.69 rows=1 width=32) (actual time=2919.833..2919.833 rows=1 loops=1)
+           Output: max((sum((lineitem_1.l_extendedprice * ('1'::numeric - lineitem_1.l_discount)))))
+           Buffers: shared hit=5 read=273558
+           ->  Finalize GroupAggregate  (cost=1513690.63..1540268.08 rows=101888 width=40) (actual time=2749.782..2913.536 rows=100000 loops=1)
+                 Output: lineitem_1.l_suppkey, sum((lineitem_1.l_extendedprice * ('1'::numeric - lineitem_1.l_discount)))
+                 Group Key: lineitem_1.l_suppkey
+                 Buffers: shared hit=5 read=273558
+                 ->  Gather Merge  (cost=1513690.63..1537466.16 rows=203776 width=40) (actual time=2749.749..2809.186 rows=299818 loops=1)
+                       Output: lineitem_1.l_suppkey, (PARTIAL sum((lineitem_1.l_extendedprice * ('1'::numeric - lineitem_1.l_discount))))
+                       Workers Planned: 2
+                       Workers Launched: 2
+                       Buffers: shared hit=36 read=700732
+                       ->  Sort  (cost=1512690.61..1512945.33 rows=101888 width=40) (actual time=2746.429..2757.381 rows=99939 loops=3)
+                             Output: lineitem_1.l_suppkey, (PARTIAL sum((lineitem_1.l_extendedprice * ('1'::numeric - lineitem_1.l_discount))))
+                             Sort Key: lineitem_1.l_suppkey
+                             Sort Method: quicksort  Memory: 17133kB
+                             Worker 0:  Sort Method: quicksort  Memory: 17123kB
+                             Worker 1:  Sort Method: quicksort  Memory: 17123kB
+                             Buffers: shared hit=36 read=700732
+                             Worker 0: actual time=2744.939..2755.885 rows=99915 loops=1
+                               Buffers: shared hit=15 read=213613
+                             Worker 1: actual time=2744.880..2755.742 rows=99917 loops=1
+                               Buffers: shared hit=16 read=213561
+                             ->  Partial HashAggregate  (cost=1502941.65..1504215.25 rows=101888 width=40) (actual time=2683.993..2722.401 rows=99939 loops=3)
+                                   Output: lineitem_1.l_suppkey, PARTIAL sum((lineitem_1.l_extendedprice * ('1'::numeric - lineitem_1.l_discount)))
+                                   Group Key: lineitem_1.l_suppkey
+                                   Buffers: shared hit=22 read=700732
+                                   Worker 0: actual time=2682.549..2721.123 rows=99915 loops=1
+                                     Buffers: shared hit=8 read=213613
+                                   Worker 1: actual time=2682.546..2721.106 rows=99917 loops=1
+                                     Buffers: shared hit=9 read=213561
+                                   ->  Parallel Bitmap Heap Scan on public.lineitem lineitem_1  (cost=32423.65..1493615.56 rows=932609 width=20) (actual time=387.322..2194.050 rows=764467 loops=3)
+                                         Output: lineitem_1.l_orderkey, lineitem_1.l_partkey, lineitem_1.l_suppkey, lineitem_1.l_linenumber, lineitem_1.l_quantity, lineitem_1.l_extendedprice, lineitem_1.l_discount, lineitem_1.l_tax, lineitem_1.l_returnflag, lineitem_1.l_linestatus, lineitem_1.l_shipdate, lineitem_1.l_commitdate, lineitem_1.l_receiptdate, lineitem_1.l_shipinstruct, lineitem_1.l_shipmode, lineitem_1.l_comment
+                                         Recheck Cond: ((lineitem_1.l_shipdate >= '1996-05-01'::date) AND (lineitem_1.l_shipdate < '1996-08-01 00:00:00'::timestamp without time zone))
+                                         Rows Removed by Index Recheck: 4067710
+                                         Heap Blocks: exact=162357 lossy=102415
+                                         Buffers: shared hit=22 read=700732
+                                         Worker 0: actual time=385.924..2221.811 rows=706965 loops=1
+                                           Buffers: shared hit=8 read=213613
+                                         Worker 1: actual time=385.902..2221.992 rows=710047 loops=1
+                                           Buffers: shared hit=9 read=213561
+                                         ->  Bitmap Index Scan on idx_lineitem_shipdate  (cost=0.00..31864.08 rows=2238262 width=0) (actual time=296.037..296.037 rows=2293400 loops=1)
+                                               Index Cond: ((lineitem_1.l_shipdate >= '1996-05-01'::date) AND (lineitem_1.l_shipdate < '1996-08-01 00:00:00'::timestamp without time zone))
+                                               Buffers: shared read=8791
+   ->  Nested Loop  (cost=1513690.92..1542755.68 rows=509 width=103) (actual time=5785.038..5785.038 rows=1 loops=1)
+         Output: supplier.s_suppkey, supplier.s_name, supplier.s_address, supplier.s_phone, (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+         Inner Unique: true
+         Buffers: shared hit=5 read=542185
+         ->  Finalize GroupAggregate  (cost=1513690.63..1541796.40 rows=509 width=40) (actual time=5785.008..5785.008 rows=1 loops=1)
+               Output: lineitem.l_suppkey, sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))
+               Group Key: lineitem.l_suppkey
+               Filter: (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))) = $1)
+               Rows Removed by Filter: 46961
+               Buffers: shared hit=5 read=542182
+               ->  Gather Merge  (cost=1513690.63..1537466.16 rows=203776 width=40) (actual time=2781.667..2878.156 rows=140810 loops=1)
+                     Output: lineitem.l_suppkey, (PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+                     Workers Planned: 2
+                     Workers Launched: 2
+                     Buffers: shared hit=19 read=700749
+                     ->  Sort  (cost=1512690.61..1512945.33 rows=101888 width=40) (actual time=2776.643..2782.795 rows=47314 loops=3)
+                           Output: lineitem.l_suppkey, (PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+                           Sort Key: lineitem.l_suppkey
+                           Sort Method: quicksort  Memory: 17132kB
+                           Worker 0:  Sort Method: quicksort  Memory: 17124kB
+                           Worker 1:  Sort Method: quicksort  Memory: 17123kB
+                           Buffers: shared hit=19 read=700749
+                           Worker 0: actual time=2774.841..2781.121 rows=47495 loops=1
+                             Buffers: shared hit=9 read=216570
+                           Worker 1: actual time=2773.760..2779.758 rows=47495 loops=1
+                             Buffers: shared hit=10 read=215555
+                           ->  Partial HashAggregate  (cost=1502941.65..1504215.25 rows=101888 width=40) (actual time=2713.836..2752.365 rows=99938 loops=3)
+                                 Output: lineitem.l_suppkey, PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))
+                                 Group Key: lineitem.l_suppkey
+                                 Buffers: shared hit=5 read=700749
+                                 Worker 0: actual time=2711.639..2750.788 rows=99923 loops=1
+                                   Buffers: shared hit=2 read=216570
+                                 Worker 1: actual time=2711.639..2749.884 rows=99912 loops=1
+                                   Buffers: shared hit=3 read=215555
+                                 ->  Parallel Bitmap Heap Scan on public.lineitem  (cost=32423.65..1493615.56 rows=932609 width=20) (actual time=383.231..2224.860 rows=764467 loops=3)
+                                       Output: lineitem.l_orderkey, lineitem.l_partkey, lineitem.l_suppkey, lineitem.l_linenumber, lineitem.l_quantity, lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_tax, lineitem.l_returnflag, lineitem.l_linestatus, lineitem.l_shipdate, lineitem.l_commitdate, lineitem.l_receiptdate, lineitem.l_shipinstruct, lineitem.l_shipmode, lineitem.l_comment
+                                       Recheck Cond: ((lineitem.l_shipdate >= '1996-05-01'::date) AND (lineitem.l_shipdate < '1996-08-01 00:00:00'::timestamp without time zone))
+                                       Rows Removed by Index Recheck: 4067710
+                                       Heap Blocks: exact=159085 lossy=100748
+                                       Buffers: shared hit=5 read=700749
+                                       Worker 0: actual time=381.070..2249.892 rows=718053 loops=1
+                                         Buffers: shared hit=2 read=216570
+                                       Worker 1: actual time=381.061..2249.838 rows=714371 loops=1
+                                         Buffers: shared hit=3 read=215555
+                                       ->  Bitmap Index Scan on idx_lineitem_shipdate  (cost=0.00..31864.08 rows=2238262 width=0) (actual time=295.366..295.366 rows=2293400 loops=1)
+                                             Index Cond: ((lineitem.l_shipdate >= '1996-05-01'::date) AND (lineitem.l_shipdate < '1996-08-01 00:00:00'::timestamp without time zone))
+                                             Buffers: shared read=8791
+         ->  Index Scan using supplier_pkey on public.supplier  (cost=0.29..1.87 rows=1 width=71) (actual time=0.027..0.027 rows=1 loops=1)
+               Output: supplier.s_suppkey, supplier.s_name, supplier.s_address, supplier.s_nationkey, supplier.s_phone, supplier.s_acctbal, supplier.s_comment
+               Index Cond: (supplier.s_suppkey = lineitem.l_suppkey)
+               Buffers: shared read=3
+ Planning Time: 0.212 ms
+ Execution Time: 5875.892 ms
+(101 rows)
+
+Time: 5876.682 ms (00:05.877)
+DROP VIEW
+Time: 5.338 ms
+CREATE VIEW
+Time: 1.699 ms
+ s_suppkey |          s_name           |          s_address           |     s_phone     | total_revenue 
+-----------+---------------------------+------------------------------+-----------------+---------------
+     46962 | Supplier#000046962        | XaRJRgXKj8wrQiVwx6dDpB4H8tVU | 33-316-183-8423 |  2133080.3850
+(1 row)
+
+Time: 5685.644 ms (00:05.686)
+DROP VIEW
+Time: 0.852 ms

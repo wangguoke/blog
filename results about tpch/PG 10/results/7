@@ -1,0 +1,7 @@
+Timing is on.
+        supp_nation        |        cust_nation        | l_year |    revenue     
+---------------------------+---------------------------+--------+----------------
+ ARGENTINA                 | RUSSIA                    |   1995 | 529923067.6232
+(1 row)
+
+Time: 43607.455 ms (00:43.607)

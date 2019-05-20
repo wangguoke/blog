@@ -1,0 +1,16 @@
+ERROR:  relation "part" already exists
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ERROR:  relation "region" already exists
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ERROR:  relation "nation" already exists
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ERROR:  relation "supplier" already exists
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ERROR:  relation "customer" already exists
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ERROR:  relation "partsupp" already exists
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ERROR:  relation "orders" already exists
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
+ERROR:  relation "lineitem" already exists
+ERROR:  current transaction is aborted, commands ignored until end of transaction block

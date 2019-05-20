@@ -1,0 +1,53 @@
+2019-05-16 19:20:10 [1558005610] : preparing TPC-H database
+2019-05-16 19:20:10 [1558005610] :   loading data
+2019-05-16 19:20:10 [1558005610] :   creating primary keys
+2019-05-16 19:20:10 [1558005610] :   creating foreign keys
+2019-05-16 19:23:04 [1558005784] :   creating indexes
+2019-05-16 19:23:04 [1558005784] :   analyzing
+2019-05-16 19:23:10 [1558005790] : running TPC-H benchmark
+2019-05-16 19:23:10 [1558005790] : running queries defined in TPC-H benchmark
+2019-05-16 19:23:10 [1558005790] :   running query 1
+2019-05-16 19:24:26 [1558005866] :     query 1 finished OK (19 seconds)
+2019-05-16 19:24:26 [1558005866] :   running query 2
+2019-05-16 19:24:40 [1558005880] :     query 2 finished OK (3 seconds)
+2019-05-16 19:24:40 [1558005880] :   running query 3
+2019-05-16 19:26:52 [1558006012] :     query 3 finished OK (9 seconds)
+2019-05-16 19:26:52 [1558006012] :   running query 4
+2019-05-16 19:27:53 [1558006073] :     query 4 finished OK (3 seconds)
+2019-05-16 19:27:53 [1558006073] :   running query 5
+2019-05-16 19:28:31 [1558006111] :     query 5 finished OK (4 seconds)
+2019-05-16 19:28:31 [1558006111] :   running query 6
+2019-05-16 19:29:03 [1558006143] :     query 6 finished OK (4 seconds)
+2019-05-16 19:29:03 [1558006143] :   running query 7
+2019-05-16 19:32:30 [1558006350] :     query 7 finished OK (43 seconds)
+2019-05-16 19:32:30 [1558006350] :   running query 8
+2019-05-16 19:32:58 [1558006378] :     query 8 finished OK (3 seconds)
+2019-05-16 19:32:59 [1558006379] :   running query 9
+2019-05-16 19:37:58 [1558006678] :     query 9 finished OK (76 seconds)
+2019-05-16 19:37:58 [1558006678] :   running query 10
+2019-05-16 19:39:16 [1558006756] :     query 10 finished OK (7 seconds)
+2019-05-16 19:39:17 [1558006757] :   running query 11
+2019-05-16 19:39:33 [1558006773] :     query 11 finished OK (1 seconds)
+2019-05-16 19:39:33 [1558006773] :   running query 12
+2019-05-16 19:40:00 [1558006800] :     query 12 finished OK (5 seconds)
+2019-05-16 19:40:00 [1558006800] :   running query 13
+2019-05-16 19:41:02 [1558006862] :     query 13 finished OK (15 seconds)
+2019-05-16 19:41:02 [1558006862] :   running query 14
+2019-05-16 19:41:11 [1558006871] :     query 14 finished OK (2 seconds)
+2019-05-16 19:41:11 [1558006871] :   running query 15
+2019-05-16 19:41:55 [1558006915] :     query 15 finished OK (12 seconds)
+2019-05-16 19:41:55 [1558006915] :   running query 16
+2019-05-16 19:42:21 [1558006941] :     query 16 finished OK (5 seconds)
+2019-05-16 19:42:21 [1558006941] :   running query 17
+2019-05-16 19:43:50 [1558007030] :     query 17 finished OK (17 seconds)
+2019-05-16 19:43:50 [1558007030] :   running query 18
+2019-05-16 19:47:41 [1558007261] :     query 18 finished OK (50 seconds)
+2019-05-16 19:47:41 [1558007261] :   running query 19
+2019-05-16 19:47:48 [1558007268] :     query 19 finished OK (1 seconds)
+2019-05-16 19:47:48 [1558007268] :   running query 20
+2019-05-16 19:51:55 [1558007515] :     query 20 finished OK (25 seconds)
+2019-05-16 19:51:55 [1558007515] :   running query 21
+2019-05-16 19:55:14 [1558007714] :     query 21 finished OK (69 seconds)
+2019-05-16 19:55:14 [1558007714] :   running query 22
+2019-05-16 19:55:31 [1558007731] :     query 22 finished OK (2 seconds)
+2019-05-16 19:55:31 [1558007731] : finished TPC-H benchmark

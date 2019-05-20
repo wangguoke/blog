@@ -1,0 +1,7 @@
+Timing is on.
+ l_shipmode | high_line_count | low_line_count 
+------------+-----------------+----------------
+ AIR        |           62358 |          94031
+(1 row)
+
+Time: 4262.587 ms (00:04.263)

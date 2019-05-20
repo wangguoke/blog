@@ -1,0 +1,279 @@
+Timing is on.
+       c_name       | c_custkey | o_orderkey | o_orderdate | o_totalprice | sum 
+--------------------+-----------+------------+-------------+--------------+-----
+ Customer#001287812 |   1287812 |   42290181 | 1997-11-26  |    558289.17 | 318
+ Customer#001172513 |   1172513 |   36667107 | 1997-06-06  |    550142.18 | 322
+ Customer#000571654 |    571654 |   21213895 | 1992-01-03  |    549380.08 | 327
+ Customer#000667882 |    667882 |    2199712 | 1996-09-30  |    542154.01 | 327
+ Customer#001471966 |   1471966 |    1263015 | 1997-02-02  |    540476.80 | 320
+ Customer#001101754 |   1101754 |   46794464 | 1992-04-28  |    532623.90 | 320
+ Customer#000591466 |    591466 |   55799200 | 1996-02-11  |    524209.45 | 327
+ Customer#001196317 |   1196317 |   34509573 | 1995-10-15  |    522897.01 | 318
+ Customer#001308376 |   1308376 |   28077922 | 1996-10-27  |    518711.99 | 319
+ Customer#000008782 |      8782 |   29294434 | 1993-01-05  |    518140.85 | 322
+ Customer#001232356 |   1232356 |   52340710 | 1993-01-01  |    512292.83 | 320
+ Customer#001247930 |   1247930 |   59138305 | 1993-10-31  |    509372.97 | 321
+ Customer#000998485 |    998485 |   51532000 | 1992-10-27  |    506996.90 | 319
+ Customer#001179178 |   1179178 |    2869152 | 1996-06-20  |    505142.88 | 317
+ Customer#000942725 |    942725 |   48881602 | 1993-09-19  |    504197.89 | 327
+ Customer#000212452 |    212452 |   23245603 | 1994-11-22  |    504070.63 | 321
+ Customer#000266747 |    266747 |   41274690 | 1992-08-10  |    503260.49 | 317
+ Customer#000896006 |    896006 |   24923202 | 1993-10-04  |    503198.09 | 316
+ Customer#000166589 |    166589 |   46685344 | 1993-12-14  |    496075.11 | 327
+ Customer#000324296 |    324296 |   26465922 | 1996-11-04  |    493279.72 | 331
+ Customer#001081807 |   1081807 |    8075589 | 1996-08-23  |    492479.61 | 316
+ Customer#000389473 |    389473 |   21135524 | 1992-11-22  |    487245.56 | 320
+ Customer#001151815 |   1151815 |   55722822 | 1995-08-24  |    485654.49 | 316
+ Customer#000372146 |    372146 |   48300454 | 1992-11-30  |    484962.56 | 318
+ Customer#000225562 |    225562 |   39492870 | 1995-08-12  |    484782.87 | 317
+ Customer#000109402 |    109402 |   10612710 | 1995-02-05  |    484659.70 | 319
+ Customer#000604861 |    604861 |   45897379 | 1994-05-30  |    481442.14 | 318
+ Customer#000347839 |    347839 |   53623108 | 1995-05-07  |    481251.56 | 316
+ Customer#001350514 |   1350514 |   43245189 | 1994-11-29  |    480988.72 | 320
+ Customer#000456290 |    456290 |   58000519 | 1996-01-17  |    480280.84 | 325
+ Customer#001076014 |   1076014 |   58919845 | 1995-07-21  |    478889.03 | 316
+ Customer#001379158 |   1379158 |   49474597 | 1992-03-06  |    478863.46 | 319
+ Customer#001115629 |   1115629 |   13165024 | 1992-06-29  |    477665.31 | 318
+ Customer#000598354 |    598354 |   56497062 | 1998-04-28  |    476882.56 | 320
+ Customer#001424164 |   1424164 |   48395044 | 1994-06-03  |    476439.88 | 316
+ Customer#000008846 |      8846 |   39702437 | 1995-11-23  |    475436.36 | 321
+ Customer#001075219 |   1075219 |   44143908 | 1992-02-24  |    472296.80 | 325
+ Customer#000156190 |    156190 |    3767271 | 1996-08-07  |    471132.45 | 318
+ Customer#000087946 |     87946 |   10805828 | 1997-07-29  |    469150.80 | 316
+ Customer#001209827 |   1209827 |   12314084 | 1994-05-16  |    467104.78 | 325
+ Customer#001268641 |   1268641 |    4702759 | 1994-11-07  |    466780.36 | 320
+ Customer#000366184 |    366184 |    4806726 | 1995-01-17  |    466287.90 | 328
+ Customer#000317285 |    317285 |   44178691 | 1998-01-24  |    459635.14 | 316
+ Customer#000773062 |    773062 |   38914978 | 1996-05-28  |    458849.50 | 324
+ Customer#001380298 |   1380298 |   13837220 | 1994-09-07  |    454998.75 | 316
+ Customer#000952849 |    952849 |   40944001 | 1993-12-15  |    454781.75 | 319
+ Customer#000109817 |    109817 |   10408580 | 1994-09-03  |    454420.76 | 320
+ Customer#000064357 |     64357 |    7235014 | 1998-03-09  |    454343.05 | 323
+ Customer#001140475 |   1140475 |   29122912 | 1996-05-08  |    453750.44 | 323
+ Customer#000523666 |    523666 |   32393895 | 1993-08-09  |    453417.44 | 316
+ Customer#001281199 |   1281199 |    4722021 | 1994-04-07  |    452129.83 | 323
+ Customer#000353261 |    353261 |   22017989 | 1996-06-17  |    452128.50 | 318
+ Customer#000631198 |    631198 |   12378086 | 1995-03-13  |    447447.22 | 320
+ Customer#000665395 |    665395 |    7810823 | 1998-01-05  |    447000.47 | 324
+ Customer#000181624 |    181624 |   17457767 | 1993-06-05  |    445836.21 | 316
+ Customer#001481954 |   1481954 |   43609317 | 1996-02-17  |    444565.67 | 325
+ Customer#001163407 |   1163407 |   11141606 | 1997-09-28  |    442694.39 | 325
+ Customer#000981457 |    981457 |   20971013 | 1997-08-12  |    442063.33 | 322
+ Customer#000500566 |    500566 |   35383045 | 1997-12-11  |    441239.00 | 317
+ Customer#000853729 |    853729 |   15071267 | 1994-10-22  |    440971.36 | 317
+ Customer#001446161 |   1446161 |    3043270 | 1997-02-12  |    440814.69 | 317
+ Customer#001242919 |   1242919 |   49847329 | 1995-09-20  |    440255.61 | 319
+ Customer#000167087 |    167087 |   17366275 | 1998-01-14  |    437804.26 | 316
+ Customer#001180559 |   1180559 |   19217698 | 1993-03-26  |    437603.57 | 316
+ Customer#000644810 |    644810 |   28184576 | 1994-01-29  |    437397.11 | 324
+ Customer#001207069 |   1207069 |   34201984 | 1997-06-18  |    433879.06 | 322
+ Customer#000773104 |    773104 |   33615872 | 1997-09-28  |    426834.17 | 317
+ Customer#000075070 |     75070 |   43997089 | 1994-08-07  |    424267.21 | 317
+ Customer#000144853 |    144853 |   11599171 | 1998-03-22  |    423978.95 | 316
+ Customer#001227100 |   1227100 |   35542498 | 1993-10-12  |    417981.24 | 325
+ Customer#001185599 |   1185599 |   54188961 | 1995-06-17  |    407873.05 | 317
+ Customer#001199881 |   1199881 |    1544643 | 1997-09-20  |    406906.07 | 320
+ Customer#001188142 |   1188142 |   42997059 | 1997-03-15  |    404132.92 | 320
+ Customer#001288183 |   1288183 |   48943904 | 1996-07-22  |    398081.59 | 325
+ Customer#000114613 |    114613 |   59930883 | 1997-05-17  |    394335.49 | 319
+(75 rows)
+
+Time: 50149.514 ms (00:50.150)
+                                                                                                                                                                                                                               QUERY PLAN                                                                                                                                                                                                                               
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=3686160.05..3686160.30 rows=100 width=71) (actual time=57600.543..57600.574 rows=75 loops=1)
+   Output: customer.c_name, customer.c_custkey, orders.o_orderkey, orders.o_orderdate, orders.o_totalprice, (sum(lineitem.l_quantity))
+   Buffers: shared hit=661799 read=863006
+   ->  Sort  (cost=3686160.05..3687413.11 rows=501221 width=71) (actual time=57313.668..57313.680 rows=75 loops=1)
+         Output: customer.c_name, customer.c_custkey, orders.o_orderkey, orders.o_orderdate, orders.o_totalprice, (sum(lineitem.l_quantity))
+         Sort Key: orders.o_totalprice DESC, orders.o_orderdate
+         Sort Method: quicksort  Memory: 30kB
+         Buffers: shared hit=661799 read=863006
+         ->  Finalize GroupAggregate  (cost=3603651.60..3667003.75 rows=501221 width=71) (actual time=57313.108..57313.479 rows=75 loops=1)
+               Output: customer.c_name, customer.c_custkey, orders.o_orderkey, orders.o_orderdate, orders.o_totalprice, sum(lineitem.l_quantity)
+               Group Key: customer.c_custkey, orders.o_orderkey
+               Buffers: shared hit=661799 read=863006
+               ->  Gather Merge  (cost=3603651.60..3656561.65 rows=417684 width=71) (actual time=57313.078..57456.072 rows=75 loops=1)
+                     Output: customer.c_custkey, orders.o_orderkey, customer.c_name, orders.o_orderdate, orders.o_totalprice, (PARTIAL sum(lineitem.l_quantity))
+                     Workers Planned: 2
+                     Workers Launched: 2
+                     Buffers: shared hit=2797391 read=1732857
+                     ->  Partial GroupAggregate  (cost=3602651.58..3607350.52 rows=208842 width=71) (actual time=57287.883..57288.021 rows=25 loops=3)
+                           Output: customer.c_custkey, orders.o_orderkey, customer.c_name, orders.o_orderdate, orders.o_totalprice, PARTIAL sum(lineitem.l_quantity)
+                           Group Key: customer.c_custkey, orders.o_orderkey
+                           Buffers: shared hit=2797391 read=1732857
+                           Worker 0: actual time=57275.521..57275.657 rows=25 loops=1
+                             Buffers: shared hit=1070278 read=432701
+                           Worker 1: actual time=57275.534..57275.669 rows=25 loops=1
+                             Buffers: shared hit=1065314 read=437150
+                           ->  Sort  (cost=3602651.58..3603173.68 rows=208842 width=44) (actual time=57287.805..57287.832 rows=175 loops=3)
+                                 Output: customer.c_custkey, orders.o_orderkey, customer.c_name, orders.o_orderdate, orders.o_totalprice, lineitem.l_quantity
+                                 Sort Key: customer.c_custkey, orders.o_orderkey
+                                 Sort Method: quicksort  Memory: 38kB
+                                 Worker 0:  Sort Method: quicksort  Memory: 38kB
+                                 Worker 1:  Sort Method: quicksort  Memory: 38kB
+                                 Buffers: shared hit=2797391 read=1732857
+                                 Worker 0: actual time=57275.434..57275.461 rows=175 loops=1
+                                   Buffers: shared hit=1070278 read=432701
+                                 Worker 1: actual time=57275.459..57275.485 rows=175 loops=1
+                                   Buffers: shared hit=1065314 read=437150
+                                 ->  Parallel Hash Join  (cost=3536888.53..3584198.25 rows=208842 width=44) (actual time=55810.579..57287.338 rows=175 loops=3)
+                                       Output: customer.c_custkey, orders.o_orderkey, customer.c_name, orders.o_orderdate, orders.o_totalprice, lineitem.l_quantity
+                                       Hash Cond: (customer.c_custkey = orders.o_custkey)
+                                       Buffers: shared hit=2797378 read=1732856
+                                       Worker 0: actual time=55775.567..57274.877 rows=175 loops=1
+                                         Buffers: shared hit=1070271 read=432701
+                                       Worker 1: actual time=55843.174..57274.856 rows=175 loops=1
+                                         Buffers: shared hit=1065308 read=437149
+                                       ->  Parallel Seq Scan on public.customer  (cost=0.00..43314.70 rows=624970 width=23) (actual time=0.398..1319.255 rows=500000 loops=3)
+                                             Output: customer.c_custkey, customer.c_name, customer.c_address, customer.c_nationkey, customer.c_phone, customer.c_acctbal, customer.c_mktsegment, customer.c_comment
+                                             Buffers: shared read=37065
+                                             Worker 0: actual time=0.024..1319.667 rows=496070 loops=1
+                                               Buffers: shared read=12262
+                                             Worker 1: actual time=1.162..1319.963 rows=499573 loops=1
+                                               Buffers: shared read=12340
+                                       ->  Parallel Hash  (cost=3534278.00..3534278.00 rows=208842 width=29) (actual time=55778.936..55778.937 rows=175 loops=3)
+                                             Output: orders.o_orderkey, orders.o_orderdate, orders.o_totalprice, orders.o_custkey, lineitem.l_quantity
+                                             Buckets: 524288  Batches: 1  Memory Usage: 4192kB
+                                             Buffers: shared hit=2797351 read=1695790
+                                             Worker 0: actual time=55767.022..55767.022 rows=161 loops=1
+                                               Buffers: shared hit=1070257 read=420439
+                                             Worker 1: actual time=55767.061..55767.061 rows=196 loops=1
+                                               Buffers: shared hit=1065295 read=424808
+                                             ->  Nested Loop  (cost=1.56..3534278.00 rows=208842 width=29) (actual time=1242.965..55778.509 rows=175 loops=3)
+                                                   Output: orders.o_orderkey, orders.o_orderdate, orders.o_totalprice, orders.o_custkey, lineitem.l_quantity
+                                                   Buffers: shared hit=2797351 read=1695790
+                                                   Worker 0: actual time=1278.061..55766.579 rows=161 loops=1
+                                                     Buffers: shared hit=1070257 read=420439
+                                                   Worker 1: actual time=1714.138..55766.474 rows=196 loops=1
+                                                     Buffers: shared hit=1065295 read=424808
+                                                   ->  Merge Join  (cost=1.00..3077801.25 rows=52230 width=32) (actual time=1242.867..55777.226 rows=25 loops=3)
+                                                         Output: orders.o_orderkey, orders.o_orderdate, orders.o_totalprice, orders.o_custkey, lineitem_1.l_orderkey
+                                                         Inner Unique: true
+                                                         Merge Cond: (orders.o_orderkey = lineitem_1.l_orderkey)
+                                                         Buffers: shared hit=2797030 read=1695717
+                                                         Worker 0: actual time=1277.925..55765.348 rows=23 loops=1
+                                                           Buffers: shared hit=1070161 read=420415
+                                                         Worker 1: actual time=1714.003..55764.928 rows=28 loops=1
+                                                           Buffers: shared hit=1065172 read=424780
+                                                         ->  Parallel Index Scan using orders_pkey on public.orders  (cost=0.43..458969.56 rows=6250133 width=24) (actual time=0.374..11257.265 rows=4994242 loops=3)
+                                                               Output: orders.o_orderkey, orders.o_custkey, orders.o_orderstatus, orders.o_totalprice, orders.o_orderdate, orders.o_orderpriority, orders.o_clerk, orders.o_shippriority, orders.o_comment
+                                                               Buffers: shared hit=39264 read=316841
+                                                               Worker 0: actual time=0.730..11214.992 rows=4685167 loops=1
+                                                                 Buffers: shared hit=12593 read=99102
+                                                               Worker 1: actual time=0.379..11209.530 rows=4658815 loops=1
+                                                                 Buffers: shared hit=12533 read=98538
+                                                         ->  GroupAggregate  (cost=0.56..2601117.15 rows=125353 width=8) (actual time=479.400..43600.513 rows=75 loops=3)
+                                                               Output: lineitem_1.l_orderkey
+                                                               Group Key: lineitem_1.l_orderkey
+                                                               Filter: (sum(lineitem_1.l_quantity) > '315'::numeric)
+                                                               Rows Removed by Filter: 14999925
+                                                               Buffers: shared hit=2757766 read=1378876
+                                                               Worker 0: actual time=469.618..43584.850 rows=75 loops=1
+                                                                 Buffers: shared hit=1057568 read=321313
+                                                               Worker 1: actual time=469.717..43586.218 rows=75 loops=1
+                                                                 Buffers: shared hit=1052639 read=326242
+                                                               ->  Index Scan using idx_lineitem_orderkey on public.lineitem lineitem_1  (cost=0.56..2295584.37 rows=59978380 width=13) (actual time=0.156..34123.134 rows=59986052 loops=3)
+                                                                     Output: lineitem_1.l_orderkey, lineitem_1.l_partkey, lineitem_1.l_suppkey, lineitem_1.l_linenumber, lineitem_1.l_quantity, lineitem_1.l_extendedprice, lineitem_1.l_discount, lineitem_1.l_tax, lineitem_1.l_returnflag, lineitem_1.l_linestatus, lineitem_1.l_shipdate, lineitem_1.l_commitdate, lineitem_1.l_receiptdate, lineitem_1.l_shipinstruct, lineitem_1.l_shipmode, lineitem_1.l_comment
+                                                                     Buffers: shared hit=2757766 read=1378876
+                                                                     Worker 0: actual time=0.181..34072.366 rows=59986052 loops=1
+                                                                       Buffers: shared hit=1057568 read=321313
+                                                                     Worker 1: actual time=0.278..34076.332 rows=59986052 loops=1
+                                                                       Buffers: shared hit=1052639 read=326242
+                                                   ->  Index Scan using idx_lineitem_orderkey on public.lineitem  (cost=0.56..7.15 rows=159 width=13) (actual time=0.038..0.041 rows=7 loops=75)
+                                                         Output: lineitem.l_orderkey, lineitem.l_partkey, lineitem.l_suppkey, lineitem.l_linenumber, lineitem.l_quantity, lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_tax, lineitem.l_returnflag, lineitem.l_linestatus, lineitem.l_shipdate, lineitem.l_commitdate, lineitem.l_receiptdate, lineitem.l_shipinstruct, lineitem.l_shipmode, lineitem.l_comment
+                                                         Index Cond: (lineitem.l_orderkey = orders.o_orderkey)
+                                                         Buffers: shared hit=321 read=73
+                                                         Worker 0: actual time=0.040..0.044 rows=7 loops=23
+                                                           Buffers: shared hit=96 read=24
+                                                         Worker 1: actual time=0.041..0.045 rows=7 loops=28
+                                                           Buffers: shared hit=123 read=28
+ Planning Time: 4.996 ms
+ JIT:
+   Functions: 122
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 14.271 ms, Inlining 73.108 ms, Optimization 456.324 ms, Emission 288.267 ms, Total 831.971 ms
+ Execution Time: 57747.651 ms
+(113 rows)
+
+Time: 57758.350 ms (00:57.758)
+       c_name       | c_custkey | o_orderkey | o_orderdate | o_totalprice | sum 
+--------------------+-----------+------------+-------------+--------------+-----
+ Customer#001287812 |   1287812 |   42290181 | 1997-11-26  |    558289.17 | 318
+ Customer#001172513 |   1172513 |   36667107 | 1997-06-06  |    550142.18 | 322
+ Customer#000571654 |    571654 |   21213895 | 1992-01-03  |    549380.08 | 327
+ Customer#000667882 |    667882 |    2199712 | 1996-09-30  |    542154.01 | 327
+ Customer#001471966 |   1471966 |    1263015 | 1997-02-02  |    540476.80 | 320
+ Customer#001101754 |   1101754 |   46794464 | 1992-04-28  |    532623.90 | 320
+ Customer#000591466 |    591466 |   55799200 | 1996-02-11  |    524209.45 | 327
+ Customer#001196317 |   1196317 |   34509573 | 1995-10-15  |    522897.01 | 318
+ Customer#001308376 |   1308376 |   28077922 | 1996-10-27  |    518711.99 | 319
+ Customer#000008782 |      8782 |   29294434 | 1993-01-05  |    518140.85 | 322
+ Customer#001232356 |   1232356 |   52340710 | 1993-01-01  |    512292.83 | 320
+ Customer#001247930 |   1247930 |   59138305 | 1993-10-31  |    509372.97 | 321
+ Customer#000998485 |    998485 |   51532000 | 1992-10-27  |    506996.90 | 319
+ Customer#001179178 |   1179178 |    2869152 | 1996-06-20  |    505142.88 | 317
+ Customer#000942725 |    942725 |   48881602 | 1993-09-19  |    504197.89 | 327
+ Customer#000212452 |    212452 |   23245603 | 1994-11-22  |    504070.63 | 321
+ Customer#000266747 |    266747 |   41274690 | 1992-08-10  |    503260.49 | 317
+ Customer#000896006 |    896006 |   24923202 | 1993-10-04  |    503198.09 | 316
+ Customer#000166589 |    166589 |   46685344 | 1993-12-14  |    496075.11 | 327
+ Customer#000324296 |    324296 |   26465922 | 1996-11-04  |    493279.72 | 331
+ Customer#001081807 |   1081807 |    8075589 | 1996-08-23  |    492479.61 | 316
+ Customer#000389473 |    389473 |   21135524 | 1992-11-22  |    487245.56 | 320
+ Customer#001151815 |   1151815 |   55722822 | 1995-08-24  |    485654.49 | 316
+ Customer#000372146 |    372146 |   48300454 | 1992-11-30  |    484962.56 | 318
+ Customer#000225562 |    225562 |   39492870 | 1995-08-12  |    484782.87 | 317
+ Customer#000109402 |    109402 |   10612710 | 1995-02-05  |    484659.70 | 319
+ Customer#000604861 |    604861 |   45897379 | 1994-05-30  |    481442.14 | 318
+ Customer#000347839 |    347839 |   53623108 | 1995-05-07  |    481251.56 | 316
+ Customer#001350514 |   1350514 |   43245189 | 1994-11-29  |    480988.72 | 320
+ Customer#000456290 |    456290 |   58000519 | 1996-01-17  |    480280.84 | 325
+ Customer#001076014 |   1076014 |   58919845 | 1995-07-21  |    478889.03 | 316
+ Customer#001379158 |   1379158 |   49474597 | 1992-03-06  |    478863.46 | 319
+ Customer#001115629 |   1115629 |   13165024 | 1992-06-29  |    477665.31 | 318
+ Customer#000598354 |    598354 |   56497062 | 1998-04-28  |    476882.56 | 320
+ Customer#001424164 |   1424164 |   48395044 | 1994-06-03  |    476439.88 | 316
+ Customer#000008846 |      8846 |   39702437 | 1995-11-23  |    475436.36 | 321
+ Customer#001075219 |   1075219 |   44143908 | 1992-02-24  |    472296.80 | 325
+ Customer#000156190 |    156190 |    3767271 | 1996-08-07  |    471132.45 | 318
+ Customer#000087946 |     87946 |   10805828 | 1997-07-29  |    469150.80 | 316
+ Customer#001209827 |   1209827 |   12314084 | 1994-05-16  |    467104.78 | 325
+ Customer#001268641 |   1268641 |    4702759 | 1994-11-07  |    466780.36 | 320
+ Customer#000366184 |    366184 |    4806726 | 1995-01-17  |    466287.90 | 328
+ Customer#000317285 |    317285 |   44178691 | 1998-01-24  |    459635.14 | 316
+ Customer#000773062 |    773062 |   38914978 | 1996-05-28  |    458849.50 | 324
+ Customer#001380298 |   1380298 |   13837220 | 1994-09-07  |    454998.75 | 316
+ Customer#000952849 |    952849 |   40944001 | 1993-12-15  |    454781.75 | 319
+ Customer#000109817 |    109817 |   10408580 | 1994-09-03  |    454420.76 | 320
+ Customer#000064357 |     64357 |    7235014 | 1998-03-09  |    454343.05 | 323
+ Customer#001140475 |   1140475 |   29122912 | 1996-05-08  |    453750.44 | 323
+ Customer#000523666 |    523666 |   32393895 | 1993-08-09  |    453417.44 | 316
+ Customer#001281199 |   1281199 |    4722021 | 1994-04-07  |    452129.83 | 323
+ Customer#000353261 |    353261 |   22017989 | 1996-06-17  |    452128.50 | 318
+ Customer#000631198 |    631198 |   12378086 | 1995-03-13  |    447447.22 | 320
+ Customer#000665395 |    665395 |    7810823 | 1998-01-05  |    447000.47 | 324
+ Customer#000181624 |    181624 |   17457767 | 1993-06-05  |    445836.21 | 316
+ Customer#001481954 |   1481954 |   43609317 | 1996-02-17  |    444565.67 | 325
+ Customer#001163407 |   1163407 |   11141606 | 1997-09-28  |    442694.39 | 325
+ Customer#000981457 |    981457 |   20971013 | 1997-08-12  |    442063.33 | 322
+ Customer#000500566 |    500566 |   35383045 | 1997-12-11  |    441239.00 | 317
+ Customer#000853729 |    853729 |   15071267 | 1994-10-22  |    440971.36 | 317
+ Customer#001446161 |   1446161 |    3043270 | 1997-02-12  |    440814.69 | 317
+ Customer#001242919 |   1242919 |   49847329 | 1995-09-20  |    440255.61 | 319
+ Customer#000167087 |    167087 |   17366275 | 1998-01-14  |    437804.26 | 316
+ Customer#001180559 |   1180559 |   19217698 | 1993-03-26  |    437603.57 | 316
+ Customer#000644810 |    644810 |   28184576 | 1994-01-29  |    437397.11 | 324
+ Customer#001207069 |   1207069 |   34201984 | 1997-06-18  |    433879.06 | 322
+ Customer#000773104 |    773104 |   33615872 | 1997-09-28  |    426834.17 | 317
+ Customer#000075070 |     75070 |   43997089 | 1994-08-07  |    424267.21 | 317
+ Customer#000144853 |    144853 |   11599171 | 1998-03-22  |    423978.95 | 316
+ Customer#001227100 |   1227100 |   35542498 | 1993-10-12  |    417981.24 | 325
+ Customer#001185599 |   1185599 |   54188961 | 1995-06-17  |    407873.05 | 317
+ Customer#001199881 |   1199881 |    1544643 | 1997-09-20  |    406906.07 | 320
+ Customer#001188142 |   1188142 |   42997059 | 1997-03-15  |    404132.92 | 320
+ Customer#001288183 |   1288183 |   48943904 | 1996-07-22  |    398081.59 | 325
+ Customer#000114613 |    114613 |   59930883 | 1997-05-17  |    394335.49 | 319
+(75 rows)
+
+Time: 47718.061 ms (00:47.718)

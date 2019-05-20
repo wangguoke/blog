@@ -1,0 +1,49 @@
+Timing is on.
+ c_count | custdist 
+---------+----------
+       0 |   500020
+(1 row)
+
+Time: 24282.911 ms (00:24.283)
+                                                                                                         QUERY PLAN                                                                                                          
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=976798.31..976798.31 rows=1 width=16) (actual time=14822.092..14822.094 rows=1 loops=1)
+   Output: (count(orders.o_orderkey)), (count(*))
+   Buffers: shared hit=15028805 read=52887
+   ->  Sort  (cost=976798.31..976798.81 rows=200 width=16) (actual time=14822.091..14822.091 rows=1 loops=1)
+         Output: (count(orders.o_orderkey)), (count(*))
+         Sort Key: (count(*)) DESC, (count(orders.o_orderkey)) DESC
+         Sort Method: top-N heapsort  Memory: 25kB
+         Buffers: shared hit=15028805 read=52887
+         ->  HashAggregate  (cost=976795.31..976797.31 rows=200 width=16) (actual time=14822.079..14822.084 rows=46 loops=1)
+               Output: (count(orders.o_orderkey)), count(*)
+               Group Key: count(orders.o_orderkey)
+               Buffers: shared hit=15028805 read=52887
+               ->  GroupAggregate  (cost=0.86..954296.78 rows=1499902 width=12) (actual time=0.036..14634.929 rows=1500000 loops=1)
+                     Output: customer.c_custkey, count(orders.o_orderkey)
+                     Group Key: customer.c_custkey
+                     Buffers: shared hit=15028805 read=52887
+                     ->  Merge Left Join  (cost=0.86..865052.48 rows=14849055 width=8) (actual time=0.018..13535.744 rows=15338712 loops=1)
+                           Output: customer.c_custkey, orders.o_orderkey
+                           Merge Cond: (customer.c_custkey = orders.o_custkey)
+                           Buffers: shared hit=15028805 read=52887
+                           ->  Index Only Scan using customer_pkey on public.customer  (cost=0.43..64091.66 rows=1499902 width=4) (actual time=0.010..327.745 rows=1500000 loops=1)
+                                 Output: customer.c_custkey
+                                 Heap Fetches: 1500000
+                                 Buffers: shared hit=14667 read=26499
+                           ->  Index Scan using idx_orders_custkey on public.orders  (cost=0.43..611597.88 rows=14849055 width=12) (actual time=0.006..11835.150 rows=14838692 loops=1)
+                                 Output: orders.o_orderkey, orders.o_custkey, orders.o_orderstatus, orders.o_totalprice, orders.o_orderdate, orders.o_orderpriority, orders.o_clerk, orders.o_shippriority, orders.o_comment
+                                 Filter: ((orders.o_comment)::text !~~ '%unusual%requests%'::text)
+                                 Rows Removed by Filter: 161308
+                                 Buffers: shared hit=15014138 read=26388
+ Planning Time: 0.167 ms
+ Execution Time: 14822.132 ms
+(31 rows)
+
+Time: 14822.825 ms (00:14.823)
+ c_count | custdist 
+---------+----------
+       0 |   500020
+(1 row)
+
+Time: 13235.639 ms (00:13.236)

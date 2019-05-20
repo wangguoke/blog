@@ -1,0 +1,138 @@
+Timing is on.
+ l_orderkey |   revenue   | o_orderdate | o_shippriority 
+------------+-------------+-------------+----------------
+   16716836 | 457530.6898 | 1995-01-28  |              0
+   49108805 | 437309.8833 | 1995-02-24  |              0
+   59180740 | 424083.7684 | 1995-02-04  |              0
+   26812736 | 422055.4106 | 1995-02-27  |              0
+   35934054 | 421764.6152 | 1995-02-17  |              0
+   19938211 | 421534.7725 | 1995-02-16  |              0
+   44247173 | 421467.1845 | 1995-02-14  |              0
+   10666915 | 415306.2064 | 1995-02-14  |              0
+   23005989 | 413233.6425 | 1995-01-22  |              0
+   37307463 | 411723.9522 | 1995-02-06  |              0
+(10 rows)
+
+Time: 14471.537 ms (00:14.472)
+                                                                                                                                                                                                   QUERY PLAN                                                                                                                                                                                                   
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=2640218.17..2640218.20 rows=10 width=48) (actual time=5366.837..5383.763 rows=10 loops=1)
+   Output: lineitem.l_orderkey, (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))), orders.o_orderdate, orders.o_shippriority
+   Buffers: shared hit=37887 read=1490490
+   ->  Sort  (cost=2640218.17..2648148.78 rows=3172243 width=48) (actual time=5065.083..5065.083 rows=10 loops=1)
+         Output: lineitem.l_orderkey, (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))), orders.o_orderdate, orders.o_shippriority
+         Sort Key: (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))) DESC, orders.o_orderdate
+         Sort Method: top-N heapsort  Memory: 26kB
+         Buffers: shared hit=37323 read=500128
+         ->  Finalize GroupAggregate  (cost=2154187.22..2571667.14 rows=3172243 width=48) (actual time=4939.531..5050.197 rows=113535 loops=1)
+               Output: lineitem.l_orderkey, sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))), orders.o_orderdate, orders.o_shippriority
+               Group Key: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority
+               Buffers: shared hit=37323 read=500128
+               ->  Gather Merge  (cost=2154187.22..2498969.90 rows=2643536 width=48) (actual time=4939.520..5012.585 rows=118242 loops=1)
+                     Output: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority, (PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))))
+                     Workers Planned: 2
+                     Workers Launched: 2
+                     Buffers: shared hit=37887 read=1490490
+                     ->  Partial GroupAggregate  (cost=2153187.19..2192840.23 rows=1321768 width=48) (actual time=4927.956..4968.970 rows=39414 loops=3)
+                           Output: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority, PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))
+                           Group Key: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority
+                           Buffers: shared hit=37887 read=1490490
+                           Worker 0: actual time=4922.318..4962.971 rows=39340 loops=1
+                             Buffers: shared hit=280 read=495911
+                           Worker 1: actual time=4922.904..4963.492 rows=39189 loops=1
+                             Buffers: shared hit=284 read=494451
+                           ->  Sort  (cost=2153187.19..2156491.61 rows=1321768 width=28) (actual time=4927.921..4931.183 rows=99650 loops=3)
+                                 Output: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority, lineitem.l_extendedprice, lineitem.l_discount
+                                 Sort Key: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority
+                                 Sort Method: quicksort  Memory: 10893kB
+                                 Worker 0:  Sort Method: quicksort  Memory: 10851kB
+                                 Worker 1:  Sort Method: quicksort  Memory: 10829kB
+                                 Buffers: shared hit=37887 read=1490490
+                                 Worker 0: actual time=4922.268..4925.295 rows=99568 loops=1
+                                   Buffers: shared hit=280 read=495911
+                                 Worker 1: actual time=4922.873..4925.898 rows=99281 loops=1
+                                   Buffers: shared hit=284 read=494451
+                                 ->  Parallel Hash Join  (cost=416321.19..2000278.99 rows=1321768 width=28) (actual time=1403.024..4910.272 rows=99650 loops=3)
+                                       Output: lineitem.l_orderkey, orders.o_orderdate, orders.o_shippriority, lineitem.l_extendedprice, lineitem.l_discount
+                                       Hash Cond: (lineitem.l_orderkey = orders.o_orderkey)
+                                       Buffers: shared hit=37805 read=1490490
+                                       Worker 0: actual time=1397.752..4904.042 rows=99568 loops=1
+                                         Buffers: shared hit=239 read=495911
+                                       Worker 1: actual time=1397.435..4904.772 rows=99281 loops=1
+                                         Buffers: shared hit=243 read=494451
+                                       ->  Parallel Seq Scan on public.lineitem  (cost=0.00..1527367.40 rows=13622146 width=20) (actual time=0.033..2420.869 rows=10886409 loops=3)
+                                             Output: lineitem.l_orderkey, lineitem.l_partkey, lineitem.l_suppkey, lineitem.l_linenumber, lineitem.l_quantity, lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_tax, lineitem.l_returnflag, lineitem.l_linestatus, lineitem.l_shipdate, lineitem.l_commitdate, lineitem.l_receiptdate, lineitem.l_shipinstruct, lineitem.l_shipmode, lineitem.l_comment
+                                             Filter: (lineitem.l_shipdate > '1995-03-02'::date)
+                                             Rows Removed by Filter: 9108942
+                                             Buffers: shared hit=549 read=1214431
+                                             Worker 0: actual time=0.040..2422.129 rows=10868327 loops=1
+                                               Buffers: shared hit=174 read=404178
+                                             Worker 1: actual time=0.042..2417.879 rows=10836176 loops=1
+                                               Buffers: shared hit=176 read=403046
+                                       ->  Parallel Hash  (cost=408740.50..408740.50 rows=606455 width=12) (actual time=1399.919..1399.919 rows=480714 loops=3)
+                                             Output: orders.o_orderdate, orders.o_shippriority, orders.o_orderkey
+                                             Buckets: 2097152  Batches: 1  Memory Usage: 84096kB
+                                             Buffers: shared hit=37228 read=276059
+                                             Worker 0: actual time=1397.144..1397.144 rows=479273 loops=1
+                                               Buffers: shared hit=51 read=91733
+                                             Worker 1: actual time=1397.110..1397.110 rows=477471 loops=1
+                                               Buffers: shared hit=53 read=91405
+                                             ->  Parallel Hash Join  (cost=46441.38..408740.50 rows=606455 width=12) (actual time=286.286..1286.250 rows=480714 loops=3)
+                                                   Output: orders.o_orderdate, orders.o_shippriority, orders.o_orderkey
+                                                   Inner Unique: true
+                                                   Hash Cond: (orders.o_custkey = customer.c_custkey)
+                                                   Buffers: shared hit=37228 read=276059
+                                                   Worker 0: actual time=283.503..1282.918 rows=479273 loops=1
+                                                     Buffers: shared hit=51 read=91733
+                                                   Worker 1: actual time=283.513..1284.151 rows=477471 loops=1
+                                                     Buffers: shared hit=53 read=91405
+                                                   ->  Parallel Seq Scan on public.orders  (cost=0.00..354348.66 rows=3028740 width=20) (actual time=0.032..543.784 rows=2402660 loops=3)
+                                                         Output: orders.o_orderkey, orders.o_custkey, orders.o_orderstatus, orders.o_totalprice, orders.o_orderdate, orders.o_orderpriority, orders.o_clerk, orders.o_shippriority, orders.o_comment
+                                                         Filter: (orders.o_orderdate < '1995-03-02'::date)
+                                                         Rows Removed by Filter: 2597340
+                                                         Buffers: shared hit=163 read=276059
+                                                         Worker 0: actual time=0.036..544.091 rows=2395283 loops=1
+                                                           Buffers: shared hit=50 read=91733
+                                                         Worker 1: actual time=0.040..542.161 rows=2385960 loops=1
+                                                           Buffers: shared hit=52 read=91405
+                                                   ->  Parallel Hash  (cost=44877.12..44877.12 rows=125140 width=4) (actual time=285.563..285.564 rows=99832 loops=3)
+                                                         Output: customer.c_custkey
+                                                         Buckets: 524288  Batches: 1  Memory Usage: 15904kB
+                                                         Buffers: shared hit=37065
+                                                         Worker 0: actual time=283.392..283.392 rows=6 loops=1
+                                                           Buffers: shared hit=1
+                                                         Worker 1: actual time=283.389..283.389 rows=7 loops=1
+                                                           Buffers: shared hit=1
+                                                         ->  Parallel Seq Scan on public.customer  (cost=0.00..44877.12 rows=125140 width=4) (actual time=188.875..237.456 rows=99832 loops=3)
+                                                               Output: customer.c_custkey
+                                                               Filter: (customer.c_mktsegment = 'FURNITURE'::bpchar)
+                                                               Rows Removed by Filter: 400168
+                                                               Buffers: shared hit=37065
+                                                               Worker 0: actual time=283.329..283.333 rows=6 loops=1
+                                                                 Buffers: shared hit=1
+                                                               Worker 1: actual time=283.271..283.276 rows=7 loops=1
+                                                                 Buffers: shared hit=1
+ Planning Time: 0.321 ms
+ JIT:
+   Functions: 110
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 9.430 ms, Inlining 69.883 ms, Optimization 493.019 ms, Emission 304.655 ms, Total 876.987 ms
+ Execution Time: 5387.985 ms
+(102 rows)
+
+Time: 5388.852 ms (00:05.389)
+ l_orderkey |   revenue   | o_orderdate | o_shippriority 
+------------+-------------+-------------+----------------
+   16716836 | 457530.6898 | 1995-01-28  |              0
+   49108805 | 437309.8833 | 1995-02-24  |              0
+   59180740 | 424083.7684 | 1995-02-04  |              0
+   26812736 | 422055.4106 | 1995-02-27  |              0
+   35934054 | 421764.6152 | 1995-02-17  |              0
+   19938211 | 421534.7725 | 1995-02-16  |              0
+   44247173 | 421467.1845 | 1995-02-14  |              0
+   10666915 | 415306.2064 | 1995-02-14  |              0
+   23005989 | 413233.6425 | 1995-01-22  |              0
+   37307463 | 411723.9522 | 1995-02-06  |              0
+(10 rows)
+
+Time: 4662.123 ms (00:04.662)

@@ -1,0 +1,54 @@
+Timing is on.
+ l_returnflag | l_linestatus |  sum_qty  | sum_base_price  |  sum_disc_price   |     sum_charge      |       avg_qty       |     avg_price      |        avg_disc        | count_order 
+--------------+--------------+-----------+-----------------+-------------------+---------------------+---------------------+--------------------+------------------------+-------------
+ A            | F            | 377518399 | 566065727797.25 | 537759104278.0656 | 559276670892.116819 | 25.5009751030070973 | 38237.151008958546 | 0.05000657454024320463 |    14804077
+(1 row)
+
+Time: 18994.202 ms (00:18.994)
+                                                                                                                                                                                       QUERY PLAN                                                                                                                                                                                       
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=2513298.34..2513298.46 rows=1 width=236) (actual time=19416.790..19417.732 rows=1 loops=1)
+   Output: l_returnflag, l_linestatus, (sum(l_quantity)), (sum(l_extendedprice)), (sum((l_extendedprice * ('1'::numeric - l_discount)))), (sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax)))), (avg(l_quantity)), (avg(l_extendedprice)), (avg(l_discount)), (count(*))
+   Buffers: shared hit=165 read=1214815
+   ->  Finalize GroupAggregate  (cost=2513298.34..2513299.05 rows=6 width=236) (actual time=19416.789..19416.789 rows=1 loops=1)
+         Output: l_returnflag, l_linestatus, sum(l_quantity), sum(l_extendedprice), sum((l_extendedprice * ('1'::numeric - l_discount))), sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax))), avg(l_quantity), avg(l_extendedprice), avg(l_discount), count(*)
+         Group Key: lineitem.l_returnflag, lineitem.l_linestatus
+         Buffers: shared hit=165 read=1214815
+         ->  Sort  (cost=2513298.34..2513298.37 rows=12 width=236) (actual time=19416.767..19416.768 rows=4 loops=1)
+               Output: l_returnflag, l_linestatus, (PARTIAL sum(l_quantity)), (PARTIAL sum(l_extendedprice)), (PARTIAL sum((l_extendedprice * ('1'::numeric - l_discount)))), (PARTIAL sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax)))), (PARTIAL avg(l_quantity)), (PARTIAL avg(l_extendedprice)), (PARTIAL avg(l_discount)), (PARTIAL count(*))
+               Sort Key: lineitem.l_returnflag, lineitem.l_linestatus
+               Sort Method: quicksort  Memory: 31kB
+               Buffers: shared hit=165 read=1214815
+               ->  Gather  (cost=2513296.76..2513298.13 rows=12 width=236) (actual time=19416.687..19417.694 rows=12 loops=1)
+                     Output: l_returnflag, l_linestatus, (PARTIAL sum(l_quantity)), (PARTIAL sum(l_extendedprice)), (PARTIAL sum((l_extendedprice * ('1'::numeric - l_discount)))), (PARTIAL sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax)))), (PARTIAL avg(l_quantity)), (PARTIAL avg(l_extendedprice)), (PARTIAL avg(l_discount)), (PARTIAL count(*))
+                     Workers Planned: 2
+                     Workers Launched: 2
+                     Buffers: shared hit=165 read=1214815
+                     ->  Partial HashAggregate  (cost=2512296.76..2512296.93 rows=6 width=236) (actual time=19415.021..19415.033 rows=4 loops=3)
+                           Output: l_returnflag, l_linestatus, PARTIAL sum(l_quantity), PARTIAL sum(l_extendedprice), PARTIAL sum((l_extendedprice * ('1'::numeric - l_discount))), PARTIAL sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax))), PARTIAL avg(l_quantity), PARTIAL avg(l_extendedprice), PARTIAL avg(l_discount), PARTIAL count(*)
+                           Group Key: lineitem.l_returnflag, lineitem.l_linestatus
+                           Buffers: shared hit=165 read=1214815
+                           Worker 0: actual time=19414.289..19414.305 rows=4 loops=1
+                             Buffers: shared hit=54 read=403927
+                           Worker 1: actual time=19414.293..19414.307 rows=4 loops=1
+                             Buffers: shared hit=56 read=405312
+                           ->  Parallel Seq Scan on public.lineitem  (cost=0.00..1527398.60 rows=24622454 width=25) (actual time=0.016..3473.182 rows=19707953 loops=3)
+                                 Output: l_returnflag, l_linestatus, l_quantity, l_extendedprice, l_discount, l_tax
+                                 Filter: (lineitem.l_shipdate <= '1998-09-01 00:00:00'::timestamp without time zone)
+                                 Rows Removed by Filter: 287398
+                                 Buffers: shared hit=165 read=1214815
+                                 Worker 0: actual time=0.022..3463.457 rows=19658137 loops=1
+                                   Buffers: shared hit=54 read=403927
+                                 Worker 1: actual time=0.023..3482.194 rows=19725815 loops=1
+                                   Buffers: shared hit=56 read=405312
+ Planning time: 0.124 ms
+ Execution time: 19417.778 ms
+(36 rows)
+
+Time: 19419.112 ms (00:19.419)
+ l_returnflag | l_linestatus |  sum_qty  | sum_base_price  |  sum_disc_price   |     sum_charge      |       avg_qty       |     avg_price      |        avg_disc        | count_order 
+--------------+--------------+-----------+-----------------+-------------------+---------------------+---------------------+--------------------+------------------------+-------------
+ A            | F            | 377518399 | 566065727797.25 | 537759104278.0656 | 559276670892.116819 | 25.5009751030070973 | 38237.151008958546 | 0.05000657454024320463 |    14804077
+(1 row)
+
+Time: 18504.882 ms (00:18.505)

@@ -1,0 +1,51 @@
+Timing is on.
+    revenue     
+----------------
+ 447966480.1401
+(1 row)
+
+Time: 20255.267 ms (00:20.255)
+                                                                                                                                       QUERY PLAN                                                                                                                                       
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=1040173.58..1040173.59 rows=1 width=32) (actual time=4371.145..4450.444 rows=1 loops=1)
+   Output: (sum((l_extendedprice * l_discount)))
+   Buffers: shared hit=32 read=716529
+   ->  Finalize Aggregate  (cost=1040173.58..1040173.59 rows=1 width=32) (actual time=4371.144..4371.144 rows=1 loops=1)
+         Output: sum((l_extendedprice * l_discount))
+         Buffers: shared hit=32 read=716529
+         ->  Gather  (cost=1040173.36..1040173.57 rows=2 width=32) (actual time=4368.958..4450.432 rows=3 loops=1)
+               Output: (PARTIAL sum((l_extendedprice * l_discount)))
+               Workers Planned: 2
+               Workers Launched: 2
+               Buffers: shared hit=32 read=716529
+               ->  Partial Aggregate  (cost=1039173.36..1039173.37 rows=1 width=32) (actual time=4365.679..4365.679 rows=1 loops=3)
+                     Output: PARTIAL sum((l_extendedprice * l_discount))
+                     Buffers: shared hit=32 read=716529
+                     Worker 0: actual time=4364.157..4364.157 rows=1 loops=1
+                       Buffers: shared hit=13 read=216496
+                     Worker 1: actual time=4364.153..4364.153 rows=1 loops=1
+                       Buffers: shared hit=12 read=214558
+                     ->  Parallel Bitmap Heap Scan on public.lineitem  (cost=201735.62..1036648.37 rows=504996 width=12) (actual time=1712.450..4279.227 rows=398144 loops=3)
+                           Output: l_extendedprice, l_discount
+                           Recheck Cond: ((lineitem.l_shipdate >= '1993-01-01'::date) AND (lineitem.l_shipdate < '1994-01-01 00:00:00'::timestamp without time zone) AND (lineitem.l_discount >= 0.01) AND (lineitem.l_discount <= 0.03) AND (lineitem.l_quantity < '25'::numeric))
+                           Rows Removed by Index Recheck: 4235396
+                           Heap Blocks: exact=152084 lossy=98499
+                           Buffers: shared hit=32 read=716529
+                           Worker 0: actual time=1710.974..4281.934 rows=379508 loops=1
+                             Buffers: shared hit=13 read=216496
+                           Worker 1: actual time=1710.963..4281.142 rows=375824 loops=1
+                             Buffers: shared hit=12 read=214558
+                           ->  Bitmap Index Scan on idx_lineitem_shipdate  (cost=0.00..201432.62 rows=1211990 width=0) (actual time=1625.940..1625.940 rows=1194433 loops=1)
+                                 Index Cond: ((lineitem.l_shipdate >= '1993-01-01'::date) AND (lineitem.l_shipdate < '1994-01-01 00:00:00'::timestamp without time zone) AND (lineitem.l_discount >= 0.01) AND (lineitem.l_discount <= 0.03) AND (lineitem.l_quantity < '25'::numeric))
+                                 Buffers: shared read=34899
+ Planning time: 0.129 ms
+ Execution time: 4450.475 ms
+(33 rows)
+
+Time: 4451.498 ms (00:04.451)
+    revenue     
+----------------
+ 447966480.1401
+(1 row)
+
+Time: 3060.319 ms (00:03.060)

@@ -1,0 +1,7 @@
+Timing is on.
+ cntrycode | numcust | totacctbal  
+-----------+---------+-------------
+ 11        |    9010 | 67914529.95
+(1 row)
+
+Time: 715.667 ms

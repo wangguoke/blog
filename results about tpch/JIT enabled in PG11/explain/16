@@ -1,0 +1,99 @@
+Timing is on.
+  p_brand   |          p_type          | p_size | supplier_cnt 
+------------+--------------------------+--------+--------------
+ Brand#55   | ECONOMY BURNISHED NICKEL |     21 |          104
+(1 row)
+
+Time: 11342.780 ms (00:11.343)
+                                                                                                    QUERY PLAN                                                                                                    
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=433947.92..433947.92 rows=1 width=44) (actual time=4327.573..4331.429 rows=1 loops=1)
+   Output: part.p_brand, part.p_type, part.p_size, (count(DISTINCT partsupp.ps_suppkey))
+   Buffers: shared hit=47979 read=183142, temp read=8424 written=8427
+   ->  Sort  (cost=433947.92..434332.28 rows=153746 width=44) (actual time=4309.785..4309.785 rows=1 loops=1)
+         Output: part.p_brand, part.p_type, part.p_size, (count(DISTINCT partsupp.ps_suppkey))
+         Sort Key: (count(DISTINCT partsupp.ps_suppkey)) DESC, part.p_brand, part.p_type, part.p_size
+         Sort Method: top-N heapsort  Memory: 25kB
+         Buffers: shared hit=47979 read=183142, temp read=8424 written=8427
+         ->  GroupAggregate  (cost=424218.51..433179.19 rows=153746 width=44) (actual time=3829.697..4306.566 rows=27840 loops=1)
+               Output: part.p_brand, part.p_type, part.p_size, count(DISTINCT partsupp.ps_suppkey)
+               Group Key: part.p_brand, part.p_type, part.p_size
+               Buffers: shared hit=47979 read=183142, temp read=8424 written=8427
+               ->  Sort  (cost=424218.51..425703.16 rows=593857 width=44) (actual time=3829.647..4098.537 rows=1188350 loops=1)
+                     Output: part.p_brand, part.p_type, part.p_size, partsupp.ps_suppkey
+                     Sort Key: part.p_brand, part.p_type, part.p_size
+                     Sort Method: external merge  Disk: 67392kB
+                     Buffers: shared hit=47979 read=183142, temp read=8424 written=8427
+                     ->  Gather  (cost=67909.38..356567.35 rows=593857 width=44) (actual time=202.499..1017.875 rows=1188350 loops=1)
+                           Output: part.p_brand, part.p_type, part.p_size, partsupp.ps_suppkey
+                           Workers Planned: 2
+                           Workers Launched: 2
+                           JIT for worker 0:
+                             Functions: 28
+                             Options: Inlining false, Optimization false, Expressions true, Deforming true
+                             Timing: Generation 2.281 ms, Inlining 0.000 ms, Optimization 0.674 ms, Emission 14.897 ms, Total 17.852 ms
+                           JIT for worker 1:
+                             Functions: 28
+                             Options: Inlining false, Optimization false, Expressions true, Deforming true
+                             Timing: Generation 2.288 ms, Inlining 0.000 ms, Optimization 0.673 ms, Emission 14.897 ms, Total 17.859 ms
+                           Buffers: shared hit=47979 read=183142
+                           ->  Parallel Hash Join  (cost=66909.38..296181.65 rows=247440 width=44) (actual time=195.828..982.788 rows=396117 loops=3)
+                                 Output: part.p_brand, part.p_type, part.p_size, partsupp.ps_suppkey
+                                 Inner Unique: true
+                                 Hash Cond: (partsupp.ps_partkey = part.p_partkey)
+                                 Buffers: shared hit=47979 read=183142
+                                 Worker 0: actual time=192.583..1022.289 rows=418882 loops=1
+                                   Buffers: shared hit=14336 read=64245
+                                 Worker 1: actual time=192.616..1022.540 rows=417702 loops=1
+                                   Buffers: shared hit=14380 read=64519
+                                 ->  Parallel Seq Scan on public.partsupp  (cost=3548.03..228446.18 rows=1666326 width=16) (actual time=20.018..526.113 rows=2665173 loops=3)
+                                       Output: partsupp.ps_partkey, partsupp.ps_suppkey, partsupp.ps_availqty, partsupp.ps_supplycost, partsupp.ps_comment
+                                       Filter: (NOT (hashed SubPlan 1))
+                                       Rows Removed by Filter: 1493
+                                       Buffers: shared hit=6992 read=183142
+                                       Worker 0: actual time=21.906..554.683 rows=2804719 loops=1
+                                         Buffers: shared hit=2330 read=64245
+                                       Worker 1: actual time=21.906..556.025 rows=2817129 loops=1
+                                         Buffers: shared hit=2331 read=64519
+                                       SubPlan 1
+                                         ->  Seq Scan on public.supplier  (cost=0.00..3548.00 rows=10 width=4) (actual time=0.079..19.936 rows=56 loops=3)
+                                               Output: supplier.s_suppkey
+                                               Filter: ((supplier.s_comment)::text ~~ '%Customer%Complaints%'::text)
+                                               Rows Removed by Filter: 99944
+                                               Buffers: shared hit=6894
+                                               Worker 0: actual time=0.085..21.821 rows=56 loops=1
+                                                 Buffers: shared hit=2298
+                                               Worker 1: actual time=0.085..21.820 rows=56 loops=1
+                                                 Buffers: shared hit=2298
+                                 ->  Parallel Hash  (cost=61814.52..61814.52 rows=123747 width=40) (actual time=175.053..175.053 rows=99084 loops=3)
+                                       Output: part.p_brand, part.p_type, part.p_size, part.p_partkey
+                                       Buckets: 524288  Batches: 1  Memory Usage: 26368kB
+                                       Buffers: shared hit=40981
+                                       Worker 0: actual time=170.572..170.572 rows=87076 loops=1
+                                         Buffers: shared hit=12003
+                                       Worker 1: actual time=170.569..170.569 rows=87494 loops=1
+                                         Buffers: shared hit=12046
+                                       ->  Parallel Seq Scan on public.part  (cost=0.00..61814.52 rows=123747 width=40) (actual time=10.542..150.141 rows=99084 loops=3)
+                                             Output: part.p_brand, part.p_type, part.p_size, part.p_partkey
+                                             Filter: ((part.p_brand <> 'Brand#51'::bpchar) AND ((part.p_type)::text !~~ 'PROMO POLISHED%'::text) AND (part.p_size = ANY ('{48,2,26,41,24,25,15,21}'::integer[])))
+                                             Rows Removed by Filter: 567583
+                                             Buffers: shared hit=40981
+                                             Worker 0: actual time=15.806..147.518 rows=87076 loops=1
+                                               Buffers: shared hit=12003
+                                             Worker 1: actual time=15.806..147.844 rows=87494 loops=1
+                                               Buffers: shared hit=12046
+ Planning Time: 0.230 ms
+ JIT:
+   Functions: 92
+   Options: Inlining false, Optimization false, Expressions true, Deforming true
+   Timing: Generation 7.205 ms, Inlining 0.000 ms, Optimization 2.018 ms, Emission 46.784 ms, Total 56.006 ms
+ Execution Time: 4345.471 ms
+(81 rows)
+
+Time: 4347.291 ms (00:04.347)
+  p_brand   |          p_type          | p_size | supplier_cnt 
+------------+--------------------------+--------+--------------
+ Brand#55   | ECONOMY BURNISHED NICKEL |     21 |          104
+(1 row)
+
+Time: 4147.640 ms (00:04.148)

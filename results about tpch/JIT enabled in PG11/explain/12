@@ -1,0 +1,80 @@
+Timing is on.
+ l_shipmode | high_line_count | low_line_count 
+------------+-----------------+----------------
+ AIR        |           62358 |          94031
+(1 row)
+
+Time: 13490.072 ms (00:13.490)
+                                                                                                                                                                                                QUERY PLAN                                                                                                                                                                                                
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=2031039.42..2031388.85 rows=1 width=27) (actual time=4664.506..4697.263 rows=1 loops=1)
+   Output: lineitem.l_shipmode, (sum(CASE WHEN ((orders.o_orderpriority = '1-URGENT'::bpchar) OR (orders.o_orderpriority = '2-HIGH'::bpchar)) THEN 1 ELSE 0 END)), (sum(CASE WHEN ((orders.o_orderpriority <> '1-URGENT'::bpchar) AND (orders.o_orderpriority <> '2-HIGH'::bpchar)) THEN 1 ELSE 0 END))
+   Buffers: shared hit=1268444 read=1197799
+   ->  Finalize GroupAggregate  (cost=2031039.42..2033485.42 rows=7 width=27) (actual time=4463.650..4463.650 rows=1 loops=1)
+         Output: lineitem.l_shipmode, sum(CASE WHEN ((orders.o_orderpriority = '1-URGENT'::bpchar) OR (orders.o_orderpriority = '2-HIGH'::bpchar)) THEN 1 ELSE 0 END), sum(CASE WHEN ((orders.o_orderpriority <> '1-URGENT'::bpchar) AND (orders.o_orderpriority <> '2-HIGH'::bpchar)) THEN 1 ELSE 0 END)
+         Group Key: lineitem.l_shipmode
+         Buffers: shared hit=445229 read=419536
+         ->  Gather Merge  (cost=2031039.42..2033485.24 rows=14 width=27) (actual time=4455.201..4496.393 rows=4 loops=1)
+               Output: lineitem.l_shipmode, (PARTIAL sum(CASE WHEN ((orders.o_orderpriority = '1-URGENT'::bpchar) OR (orders.o_orderpriority = '2-HIGH'::bpchar)) THEN 1 ELSE 0 END)), (PARTIAL sum(CASE WHEN ((orders.o_orderpriority <> '1-URGENT'::bpchar) AND (orders.o_orderpriority <> '2-HIGH'::bpchar)) THEN 1 ELSE 0 END))
+               Workers Planned: 2
+               Workers Launched: 2
+               Buffers: shared hit=1268444 read=1197799
+               ->  Partial GroupAggregate  (cost=2030039.39..2032483.60 rows=7 width=27) (actual time=4445.455..4453.355 rows=2 loops=3)
+                     Output: lineitem.l_shipmode, PARTIAL sum(CASE WHEN ((orders.o_orderpriority = '1-URGENT'::bpchar) OR (orders.o_orderpriority = '2-HIGH'::bpchar)) THEN 1 ELSE 0 END), PARTIAL sum(CASE WHEN ((orders.o_orderpriority <> '1-URGENT'::bpchar) AND (orders.o_orderpriority <> '2-HIGH'::bpchar)) THEN 1 ELSE 0 END)
+                     Group Key: lineitem.l_shipmode
+                     Buffers: shared hit=1268444 read=1197799
+                     Worker 0: actual time=4440.751..4448.415 rows=2 loops=1
+                       Buffers: shared hit=413589 read=392378
+                     Worker 1: actual time=4440.691..4448.293 rows=2 loops=1
+                       Buffers: shared hit=409626 read=385885
+                     ->  Sort  (cost=2030039.39..2030344.91 rows=122207 width=27) (actual time=4437.453..4440.845 rows=104198 loops=3)
+                           Output: lineitem.l_shipmode, orders.o_orderpriority
+                           Sort Key: lineitem.l_shipmode
+                           Sort Method: quicksort  Memory: 11643kB
+                           Worker 0:  Sort Method: quicksort  Memory: 11036kB
+                           Worker 1:  Sort Method: quicksort  Memory: 10960kB
+                           Buffers: shared hit=1268444 read=1197799
+                           Worker 0: actual time=4432.952..4436.228 rows=101929 loops=1
+                             Buffers: shared hit=413589 read=392378
+                           Worker 1: actual time=4432.971..4436.208 rows=100966 loops=1
+                             Buffers: shared hit=409626 read=385885
+                           ->  Nested Loop  (cost=0.43..2019713.53 rows=122207 width=27) (actual time=126.788..4415.666 rows=104198 loops=3)
+                                 Output: lineitem.l_shipmode, orders.o_orderpriority
+                                 Inner Unique: true
+                                 Buffers: shared hit=1268430 read=1197799
+                                 Worker 0: actual time=191.440..4411.422 rows=101929 loops=1
+                                   Buffers: shared hit=413582 read=392378
+                                 Worker 1: actual time=188.865..4411.482 rows=100966 loops=1
+                                   Buffers: shared hit=409619 read=385885
+                                 ->  Parallel Seq Scan on public.lineitem  (cost=0.00..1777277.31 rows=122207 width=19) (actual time=126.740..4029.173 rows=104198 loops=3)
+                                       Output: lineitem.l_orderkey, lineitem.l_partkey, lineitem.l_suppkey, lineitem.l_linenumber, lineitem.l_quantity, lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_tax, lineitem.l_returnflag, lineitem.l_linestatus, lineitem.l_shipdate, lineitem.l_commitdate, lineitem.l_receiptdate, lineitem.l_shipinstruct, lineitem.l_shipmode, lineitem.l_comment
+                                       Filter: ((lineitem.l_shipmode = ANY ('{TRUCK,AIR}'::bpchar[])) AND (lineitem.l_commitdate < lineitem.l_receiptdate) AND (lineitem.l_shipdate < lineitem.l_commitdate) AND (lineitem.l_receiptdate >= '1996-01-01'::date) AND (lineitem.l_receiptdate < '1997-01-01 00:00:00'::timestamp without time zone))
+                                       Rows Removed by Filter: 19891153
+                                       Buffers: shared hit=17181 read=1197799
+                                       Worker 0: actual time=191.377..3988.656 rows=101929 loops=1
+                                         Buffers: shared hit=5584 read=392378
+                                       Worker 1: actual time=188.798..3988.379 rows=100966 loops=1
+                                         Buffers: shared hit=5444 read=385885
+                                 ->  Index Scan using orders_pkey on public.orders  (cost=0.43..1.98 rows=1 width=20) (actual time=0.003..0.003 rows=1 loops=312593)
+                                       Output: orders.o_orderkey, orders.o_custkey, orders.o_orderstatus, orders.o_totalprice, orders.o_orderdate, orders.o_orderpriority, orders.o_clerk, orders.o_shippriority, orders.o_comment
+                                       Index Cond: (orders.o_orderkey = lineitem.l_orderkey)
+                                       Buffers: shared hit=1251249
+                                       Worker 0: actual time=0.004..0.004 rows=1 loops=101929
+                                         Buffers: shared hit=407998
+                                       Worker 1: actual time=0.004..0.004 rows=1 loops=100966
+                                         Buffers: shared hit=404175
+ Planning Time: 0.187 ms
+ JIT:
+   Functions: 53
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 5.711 ms, Inlining 74.454 ms, Optimization 317.300 ms, Emission 188.030 ms, Total 585.495 ms
+ Execution Time: 4700.418 ms
+(62 rows)
+
+Time: 4701.458 ms (00:04.701)
+ l_shipmode | high_line_count | low_line_count 
+------------+-----------------+----------------
+ AIR        |           62358 |          94031
+(1 row)
+
+Time: 3866.967 ms (00:03.867)

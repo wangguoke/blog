@@ -1,0 +1,182 @@
+Timing is on.
+ c_custkey |       c_name       |   revenue   | c_acctbal |          n_name           |                c_address                |     c_phone     |                                                    c_comment                                                     
+-----------+--------------------+-------------+-----------+---------------------------+-----------------------------------------+-----------------+------------------------------------------------------------------------------------------------------------------
+    974614 | Customer#000974614 | 846505.8848 |   -372.15 | GERMANY                   | jEGNlHyBzLQIsul4y57KvyMYIUlmsU          | 17-157-740-9395 |  furiously deposits. blithely special forges eat. sile
+   1076482 | Customer#001076482 | 787832.7999 |   2414.12 | JAPAN                     | vioR29aq mcEphOVLcAuv7XVVbgf1c4eucpQ    | 22-832-245-9455 | y fluffily even excuses. fluffily final instructions are blithely carefully i
+   1016872 | Customer#001016872 | 766364.9014 |   8366.35 | MOROCCO                   | akbJmqUotTobbQInBnaCMGnWj9Oy8c5m        | 25-832-990-6352 | aters maintain before the pending, regular requests. regular decoys about the silent, final frets promise slyly
+    555961 | Customer#000555961 | 762070.7143 |    276.28 | CHINA                     | xXZNc4l4LwldR0KYyAr78dXwt               | 28-739-685-8697 | nic courts. bold accounts should integrate 
+    327232 | Customer#000327232 | 761492.9522 |   2344.69 | ARGENTINA                 | p44OLLuqMMMJZwClgDU5                    | 11-676-188-2421 | s grow blithely. packages serv
+    305182 | Customer#000305182 | 754104.1795 |   6559.29 | INDIA                     | BBa5UZRszWn7AKqBsJW4G2jywFExReMK        | 18-602-379-1505 | he unusual, even deposits. even instructions after the 
+    514298 | Customer#000514298 | 743218.9789 |   7745.16 | KENYA                     | BZtOPUiu5Tdz                            | 24-589-151-9980 |  furiously above the even foxes. regular accounts against the blithely ironic deposits are unusual packages. bli
+    304753 | Customer#000304753 | 739574.7719 |    235.56 | FRANCE                    | evuTnf3neLvPf7b69sbsTUkb0UqBuu          | 16-190-264-8587 | de of the silent asymptotes wake blith
+   1048297 | Customer#001048297 | 737847.7088 |   -103.28 | ALGERIA                   | VhXznp31GvCkuxpQ                        | 10-494-955-9277 | thely pending requests after the instructions us
+    517225 | Customer#000517225 | 736198.0675 |   6519.01 | ARGENTINA                 | STYfw5Kr51Z8BRUb5YpLJGoSKDoZNUFzPs      | 11-200-962-3568 | ual accounts affix theodolites: furiously ironic accounts are. evenly fina
+    753253 | Customer#000753253 | 731400.4902 |   -958.03 | IRAN                      | sxq0d9k,PCVl1vcn5sp                     | 20-950-588-8556 | ly even ideas. carefully final pinto beans wake car
+    347569 | Customer#000347569 | 728138.5761 |   3081.12 | BRAZIL                    | JhOFWRVK, x351xgcrmyD                   | 12-736-481-1128 | ccounts above the furiously regular pinto beans haggle slyly
+    758191 | Customer#000758191 | 727539.9691 |    227.42 | BRAZIL                    | Bb4YM38ZkrjYK6wR37sc8L02FPntjRw1m6LAm   | 12-290-974-4176 |  packages are fluffily slyly ironic 
+   1091348 | Customer#001091348 | 727409.1698 |   9209.18 | KENYA                     | F8ZMVU2jPonRqQdOCQt76e HH4y             | 24-477-923-3075 | . slyly regular deposits are slyly bold packages. packages above the carefully unusual waters are acco
+    842824 | Customer#000842824 | 721662.6899 |   4184.68 | ETHIOPIA                  | U921jtWMsPGxMWM                         | 15-394-169-1098 | unts. thin, unusual depths are finally. excuses near the silent instructions are quickly pending requests
+     39364 | Customer#000039364 | 712960.5287 |   2504.85 | JORDAN                    | MNDAthrFW6ios2ujpGFjDMZEHInp 4cIr       | 23-526-818-9821 | epths. even deposits affix carefully against the bold, regular theodolites. car
+   1100743 | Customer#001100743 | 708504.0852 |   4399.00 | INDONESIA                 | uz4bBjBYoA,gjoZ5dhGvsmZNrv5OjCgt        | 19-542-321-2434 | uickly. ironic, even accounts against the ironic pains nag carefull
+    309157 | Customer#000309157 | 707149.1360 |    678.20 | ARGENTINA                 | HCFmX29qi oOTeu3rTBnZt5Gzo7ZD7ITZfoAspb | 11-423-392-5805 | ic deposits wake boldly. special packages nag quickly along 
+    340927 | Customer#000340927 | 703136.0101 |   5494.36 | VIETNAM                   | zBAlyvPH5jtp7YYb7GxXAiD0                | 31-186-984-1193 | . final, final accounts instead of the carefully ironic requests det
+    757405 | Customer#000757405 | 696434.4911 |   -454.95 | SAUDI ARABIA              | WofZ3wKlWdN                             | 30-810-482-5402 | arefully about the furiously ironic accounts. bold, bold ideas wake. enticing accounts are
+(20 rows)
+
+Time: 55560.962 ms (00:55.561)
+                                                                                                                     QUERY PLAN                                                                                                                     
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=2190069.54..2190069.59 rows=20 width=202) (actual time=8854.930..8934.428 rows=20 loops=1)
+   Output: customer.c_custkey, customer.c_name, (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))), customer.c_acctbal, nation.n_name, customer.c_address, customer.c_phone, customer.c_comment
+   Buffers: shared hit=1038382 read=1020973, temp read=167260 written=167171
+   ->  Sort  (cost=2190069.54..2191539.89 rows=588139 width=202) (actual time=8854.929..8854.929 rows=20 loops=1)
+         Output: customer.c_custkey, customer.c_name, (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))), customer.c_acctbal, nation.n_name, customer.c_address, customer.c_phone, customer.c_comment
+         Sort Key: (sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))) DESC
+         Sort Method: top-N heapsort  Memory: 33kB
+         Buffers: shared hit=350875 read=364653, temp read=57538 written=57509
+         ->  Finalize GroupAggregate  (cost=2098855.83..2174419.37 rows=588139 width=202) (actual time=8042.628..8771.616 rows=381448 loops=1)
+               Output: customer.c_custkey, customer.c_name, sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))), customer.c_acctbal, nation.n_name, customer.c_address, customer.c_phone, customer.c_comment
+               Group Key: customer.c_custkey, nation.n_name
+               Buffers: shared hit=350875 read=364653, temp read=57538 written=57509
+               ->  Gather Merge  (cost=2098855.83..2162166.47 rows=490116 width=202) (actual time=8042.623..8549.831 rows=464679 loops=1)
+                     Output: customer.c_custkey, nation.n_name, customer.c_name, (PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))), customer.c_acctbal, customer.c_address, customer.c_phone, customer.c_comment
+                     Workers Planned: 2
+                     Workers Launched: 2
+                     Buffers: shared hit=1038382 read=1020973, temp read=167260 written=167171
+                     ->  Partial GroupAggregate  (cost=2097855.81..2104594.90 rows=245058 width=202) (actual time=7981.406..8241.766 rows=154893 loops=3)
+                           Output: customer.c_custkey, nation.n_name, customer.c_name, PARTIAL sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount))), customer.c_acctbal, customer.c_address, customer.c_phone, customer.c_comment
+                           Group Key: customer.c_custkey, nation.n_name
+                           Buffers: shared hit=1038382 read=1020973, temp read=167260 written=167171
+                           Worker 0: actual time=7954.891..8206.008 rows=151756 loops=1
+                             Buffers: shared hit=344665 read=332235, temp read=55179 written=55149
+                           Worker 1: actual time=7947.048..8192.129 rows=148127 loops=1
+                             Buffers: shared hit=342842 read=324085, temp read=54543 written=54513
+                           ->  Sort  (cost=2097855.81..2098468.45 rows=245058 width=182) (actual time=7981.385..8040.019 rows=382471 loops=3)
+                                 Output: customer.c_custkey, nation.n_name, customer.c_name, lineitem.l_extendedprice, lineitem.l_discount, customer.c_acctbal, customer.c_address, customer.c_phone, customer.c_comment
+                                 Sort Key: customer.c_custkey, nation.n_name
+                                 Sort Method: external merge  Disk: 78448kB
+                                 Buffers: shared hit=1038382 read=1020973, temp read=167260 written=167171
+                                 Worker 0: actual time=7954.867..8009.226 rows=373722 loops=1
+                                   Buffers: shared hit=344665 read=332235, temp read=55179 written=55149
+                                 Worker 1: actual time=7947.019..8000.848 rows=362895 loops=1
+                                   Buffers: shared hit=342842 read=324085, temp read=54543 written=54513
+                                 ->  Hash Join  (cost=405834.26..2063162.58 rows=245058 width=182) (actual time=1470.905..7683.045 rows=382471 loops=3)
+                                       Output: customer.c_custkey, nation.n_name, customer.c_name, lineitem.l_extendedprice, lineitem.l_discount, customer.c_acctbal, customer.c_address, customer.c_phone, customer.c_comment
+                                       Inner Unique: true
+                                       Hash Cond: (customer.c_nationkey = nation.n_nationkey)
+                                       Buffers: shared hit=1038354 read=1020973, temp read=139887 written=139791
+                                       Worker 0: actual time=1656.570..7658.461 rows=373722 loops=1
+                                         Buffers: shared hit=344651 read=332235, temp read=46268 written=46236
+                                       Worker 1: actual time=1655.857..7654.285 rows=362895 loops=1
+                                         Buffers: shared hit=342828 read=324085, temp read=45887 written=45855
+                                       ->  Hash Join  (cost=405832.69..2062408.69 rows=245058 width=164) (actual time=1470.861..7630.009 rows=382471 loops=3)
+                                             Output: customer.c_custkey, customer.c_name, customer.c_acctbal, customer.c_address, customer.c_phone, customer.c_comment, customer.c_nationkey, lineitem.l_extendedprice, lineitem.l_discount
+                                             Inner Unique: true
+                                             Hash Cond: (orders.o_custkey = customer.c_custkey)
+                                             Buffers: shared hit=1038317 read=1020973, temp read=139887 written=139791
+                                             Worker 0: actual time=1656.510..7606.548 rows=373722 loops=1
+                                               Buffers: shared hit=344633 read=332235, temp read=46268 written=46236
+                                             Worker 1: actual time=1655.797..7603.814 rows=362895 loops=1
+                                               Buffers: shared hit=342810 read=324085, temp read=45887 written=45855
+                                             ->  Hash Join  (cost=302790.65..1923624.37 rows=245058 width=20) (actual time=790.851..6499.528 rows=382471 loops=3)
+                                                   Output: orders.o_custkey, lineitem.l_extendedprice, lineitem.l_discount
+                                                   Inner Unique: true
+                                                   Hash Cond: (lineitem.l_orderkey = orders.o_orderkey)
+                                                   Buffers: shared hit=927074 read=1020973, temp read=43170 written=43164
+                                                   Worker 0: actual time=940.673..6459.768 rows=373722 loops=1
+                                                     Buffers: shared hit=307544 read=332235, temp read=14071 written=14069
+                                                   Worker 1: actual time=940.563..6454.391 rows=362895 loops=1
+                                                     Buffers: shared hit=305721 read=324085, temp read=13741 written=13739
+                                                   ->  Parallel Seq Scan on public.lineitem  (cost=0.00..1527398.60 rows=6315855 width=20) (actual time=0.113..4733.743 rows=4936061 loops=3)
+                                                         Output: lineitem.l_extendedprice, lineitem.l_discount, lineitem.l_orderkey
+                                                         Filter: (lineitem.l_returnflag = 'R'::bpchar)
+                                                         Rows Removed by Filter: 15059290
+                                                         Buffers: shared hit=194007 read=1020973
+                                                         Worker 0: actual time=0.288..4582.913 rows=4818887 loops=1
+                                                           Buffers: shared hit=63187 read=332235
+                                                         Worker 1: actual time=0.045..4565.658 rows=4697003 loops=1
+                                                           Buffers: shared hit=61364 read=324085
+                                                   ->  Hash  (cost=292673.61..292673.61 rows=582003 width=12) (actual time=787.902..787.903 rows=573544 loops=3)
+                                                         Output: orders.o_custkey, orders.o_orderkey
+                                                         Buckets: 1048576  Batches: 2  Memory Usage: 20514kB
+                                                         Buffers: shared hit=733061, temp written=3360
+                                                         Worker 0: actual time=936.867..936.867 rows=573544 loops=1
+                                                           Buffers: shared hit=244354, temp written=1120
+                                                         Worker 1: actual time=937.049..937.049 rows=573544 loops=1
+                                                           Buffers: shared hit=244354, temp written=1120
+                                                         ->  Bitmap Heap Scan on public.orders  (cost=7721.57..292673.61 rows=582003 width=12) (actual time=138.909..697.535 rows=573544 loops=3)
+                                                               Output: orders.o_custkey, orders.o_orderkey
+                                                               Recheck Cond: ((orders.o_orderdate >= '1993-05-01'::date) AND (orders.o_orderdate < '1993-08-01 00:00:00'::timestamp without time zone))
+                                                               Heap Blocks: exact=242783
+                                                               Buffers: shared hit=733061
+                                                               Worker 0: actual time=148.707..847.629 rows=573544 loops=1
+                                                                 Buffers: shared hit=244354
+                                                               Worker 1: actual time=149.128..844.417 rows=573544 loops=1
+                                                                 Buffers: shared hit=244354
+                                                               ->  Bitmap Index Scan on idx_orders_orderdate  (cost=0.00..7576.07 rows=582003 width=0) (actual time=87.019..87.019 rows=573544 loops=3)
+                                                                     Index Cond: ((orders.o_orderdate >= '1993-05-01'::date) AND (orders.o_orderdate < '1993-08-01 00:00:00'::timestamp without time zone))
+                                                                     Buffers: shared hit=4712
+                                                                     Worker 0: actual time=94.358..94.358 rows=573544 loops=1
+                                                                       Buffers: shared hit=1571
+                                                                     Worker 1: actual time=94.551..94.551 rows=573544 loops=1
+                                                                       Buffers: shared hit=1571
+                                             ->  Hash  (cost=52065.02..52065.02 rows=1500002 width=152) (actual time=677.613..677.613 rows=1500000 loops=3)
+                                                   Output: customer.c_custkey, customer.c_name, customer.c_acctbal, customer.c_address, customer.c_phone, customer.c_comment, customer.c_nationkey
+                                                   Buckets: 262144  Batches: 16  Memory Usage: 19341kB
+                                                   Buffers: shared hit=111195, temp written=91113
+                                                   Worker 0: actual time=713.732..713.732 rows=1500000 loops=1
+                                                     Buffers: shared hit=37065, temp written=30371
+                                                   Worker 1: actual time=713.727..713.727 rows=1500000 loops=1
+                                                     Buffers: shared hit=37065, temp written=30371
+                                                   ->  Seq Scan on public.customer  (cost=0.00..52065.02 rows=1500002 width=152) (actual time=0.012..260.723 rows=1500000 loops=3)
+                                                         Output: customer.c_custkey, customer.c_name, customer.c_acctbal, customer.c_address, customer.c_phone, customer.c_comment, customer.c_nationkey
+                                                         Buffers: shared hit=111195
+                                                         Worker 0: actual time=0.020..294.941 rows=1500000 loops=1
+                                                           Buffers: shared hit=37065
+                                                         Worker 1: actual time=0.011..288.009 rows=1500000 loops=1
+                                                           Buffers: shared hit=37065
+                                       ->  Hash  (cost=1.25..1.25 rows=25 width=30) (actual time=0.017..0.017 rows=25 loops=3)
+                                             Output: nation.n_name, nation.n_nationkey
+                                             Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                             Buffers: shared hit=3
+                                             Worker 0: actual time=0.021..0.021 rows=25 loops=1
+                                               Buffers: shared hit=1
+                                             Worker 1: actual time=0.022..0.022 rows=25 loops=1
+                                               Buffers: shared hit=1
+                                             ->  Seq Scan on public.nation  (cost=0.00..1.25 rows=25 width=30) (actual time=0.010..0.012 rows=25 loops=3)
+                                                   Output: nation.n_name, nation.n_nationkey
+                                                   Buffers: shared hit=3
+                                                   Worker 0: actual time=0.013..0.015 rows=25 loops=1
+                                                     Buffers: shared hit=1
+                                                   Worker 1: actual time=0.013..0.015 rows=25 loops=1
+                                                     Buffers: shared hit=1
+ Planning time: 0.495 ms
+ Execution time: 8951.345 ms
+(126 rows)
+
+Time: 8957.688 ms (00:08.958)
+ c_custkey |       c_name       |   revenue   | c_acctbal |          n_name           |                c_address                |     c_phone     |                                                    c_comment                                                     
+-----------+--------------------+-------------+-----------+---------------------------+-----------------------------------------+-----------------+------------------------------------------------------------------------------------------------------------------
+    974614 | Customer#000974614 | 846505.8848 |   -372.15 | GERMANY                   | jEGNlHyBzLQIsul4y57KvyMYIUlmsU          | 17-157-740-9395 |  furiously deposits. blithely special forges eat. sile
+   1076482 | Customer#001076482 | 787832.7999 |   2414.12 | JAPAN                     | vioR29aq mcEphOVLcAuv7XVVbgf1c4eucpQ    | 22-832-245-9455 | y fluffily even excuses. fluffily final instructions are blithely carefully i
+   1016872 | Customer#001016872 | 766364.9014 |   8366.35 | MOROCCO                   | akbJmqUotTobbQInBnaCMGnWj9Oy8c5m        | 25-832-990-6352 | aters maintain before the pending, regular requests. regular decoys about the silent, final frets promise slyly
+    555961 | Customer#000555961 | 762070.7143 |    276.28 | CHINA                     | xXZNc4l4LwldR0KYyAr78dXwt               | 28-739-685-8697 | nic courts. bold accounts should integrate 
+    327232 | Customer#000327232 | 761492.9522 |   2344.69 | ARGENTINA                 | p44OLLuqMMMJZwClgDU5                    | 11-676-188-2421 | s grow blithely. packages serv
+    305182 | Customer#000305182 | 754104.1795 |   6559.29 | INDIA                     | BBa5UZRszWn7AKqBsJW4G2jywFExReMK        | 18-602-379-1505 | he unusual, even deposits. even instructions after the 
+    514298 | Customer#000514298 | 743218.9789 |   7745.16 | KENYA                     | BZtOPUiu5Tdz                            | 24-589-151-9980 |  furiously above the even foxes. regular accounts against the blithely ironic deposits are unusual packages. bli
+    304753 | Customer#000304753 | 739574.7719 |    235.56 | FRANCE                    | evuTnf3neLvPf7b69sbsTUkb0UqBuu          | 16-190-264-8587 | de of the silent asymptotes wake blith
+   1048297 | Customer#001048297 | 737847.7088 |   -103.28 | ALGERIA                   | VhXznp31GvCkuxpQ                        | 10-494-955-9277 | thely pending requests after the instructions us
+    517225 | Customer#000517225 | 736198.0675 |   6519.01 | ARGENTINA                 | STYfw5Kr51Z8BRUb5YpLJGoSKDoZNUFzPs      | 11-200-962-3568 | ual accounts affix theodolites: furiously ironic accounts are. evenly fina
+    753253 | Customer#000753253 | 731400.4902 |   -958.03 | IRAN                      | sxq0d9k,PCVl1vcn5sp                     | 20-950-588-8556 | ly even ideas. carefully final pinto beans wake car
+    347569 | Customer#000347569 | 728138.5761 |   3081.12 | BRAZIL                    | JhOFWRVK, x351xgcrmyD                   | 12-736-481-1128 | ccounts above the furiously regular pinto beans haggle slyly
+    758191 | Customer#000758191 | 727539.9691 |    227.42 | BRAZIL                    | Bb4YM38ZkrjYK6wR37sc8L02FPntjRw1m6LAm   | 12-290-974-4176 |  packages are fluffily slyly ironic 
+   1091348 | Customer#001091348 | 727409.1698 |   9209.18 | KENYA                     | F8ZMVU2jPonRqQdOCQt76e HH4y             | 24-477-923-3075 | . slyly regular deposits are slyly bold packages. packages above the carefully unusual waters are acco
+    842824 | Customer#000842824 | 721662.6899 |   4184.68 | ETHIOPIA                  | U921jtWMsPGxMWM                         | 15-394-169-1098 | unts. thin, unusual depths are finally. excuses near the silent instructions are quickly pending requests
+     39364 | Customer#000039364 | 712960.5287 |   2504.85 | JORDAN                    | MNDAthrFW6ios2ujpGFjDMZEHInp 4cIr       | 23-526-818-9821 | epths. even deposits affix carefully against the bold, regular theodolites. car
+   1100743 | Customer#001100743 | 708504.0852 |   4399.00 | INDONESIA                 | uz4bBjBYoA,gjoZ5dhGvsmZNrv5OjCgt        | 19-542-321-2434 | uickly. ironic, even accounts against the ironic pains nag carefull
+    309157 | Customer#000309157 | 707149.1360 |    678.20 | ARGENTINA                 | HCFmX29qi oOTeu3rTBnZt5Gzo7ZD7ITZfoAspb | 11-423-392-5805 | ic deposits wake boldly. special packages nag quickly along 
+    340927 | Customer#000340927 | 703136.0101 |   5494.36 | VIETNAM                   | zBAlyvPH5jtp7YYb7GxXAiD0                | 31-186-984-1193 | . final, final accounts instead of the carefully ironic requests det
+    757405 | Customer#000757405 | 696434.4911 |   -454.95 | SAUDI ARABIA              | WofZ3wKlWdN                             | 30-810-482-5402 | arefully about the furiously ironic accounts. bold, bold ideas wake. enticing accounts are
+(20 rows)
+
+Time: 6588.439 ms (00:06.588)

@@ -1,0 +1,70 @@
+Timing is on.
+ cntrycode | numcust | totacctbal  
+-----------+---------+-------------
+ 11        |    9010 | 67914529.95
+(1 row)
+
+Time: 12906.753 ms (00:12.907)
+                                                                                            QUERY PLAN                                                                                            
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=159980.92..159980.94 rows=1 width=72) (actual time=962.000..962.001 rows=1 loops=1)
+   Output: ("substring"((customer.c_phone)::text, 1, 2)), (count(*)), (sum(customer.c_acctbal))
+   Buffers: shared hit=774804
+   InitPlan 1 (returns $1)
+     ->  Finalize Aggregate  (cost=54521.23..54521.24 rows=1 width=32) (actual time=217.313..217.313 rows=1 loops=1)
+           Output: avg(customer_1.c_acctbal)
+           Buffers: shared hit=37071
+           ->  Gather  (cost=54521.01..54521.22 rows=2 width=32) (actual time=217.263..217.361 rows=3 loops=1)
+                 Output: (PARTIAL avg(customer_1.c_acctbal))
+                 Workers Planned: 2
+                 Workers Launched: 2
+                 Buffers: shared hit=37071
+                 ->  Partial Aggregate  (cost=53521.01..53521.02 rows=1 width=32) (actual time=215.510..215.510 rows=1 loops=3)
+                       Output: PARTIAL avg(customer_1.c_acctbal)
+                       Buffers: shared hit=37071
+                       Worker 0: actual time=214.717..214.717 rows=1 loops=1
+                         Buffers: shared hit=11429
+                       Worker 1: actual time=214.719..214.719 rows=1 loops=1
+                         Buffers: shared hit=11450
+                       ->  Parallel Seq Scan on public.customer customer_1  (cost=0.00..53471.27 rows=19894 width=6) (actual time=0.018..204.628 rows=127264 loops=3)
+                             Output: customer_1.c_acctbal
+                             Filter: ((customer_1.c_acctbal > 0.00) AND ("substring"((customer_1.c_phone)::text, 1, 2) = ANY ('{29,21,11,17,20,26,31}'::text[])))
+                             Rows Removed by Filter: 372736
+                             Buffers: shared hit=37071
+                             Worker 0: actual time=0.025..204.730 rows=117612 loops=1
+                               Buffers: shared hit=11429
+                             Worker 1: actual time=0.023..204.739 rows=118124 loops=1
+                               Buffers: shared hit=11450
+   ->  GroupAggregate  (cost=105459.67..105666.25 rows=7512 width=72) (actual time=961.999..961.999 rows=1 loops=1)
+         Output: ("substring"((customer.c_phone)::text, 1, 2)), count(*), sum(customer.c_acctbal)
+         Group Key: ("substring"((customer.c_phone)::text, 1, 2))
+         Buffers: shared hit=774804
+         ->  Sort  (cost=105459.67..105478.45 rows=7512 width=38) (actual time=960.593..960.906 rows=9011 loops=1)
+               Output: ("substring"((customer.c_phone)::text, 1, 2)), customer.c_acctbal
+               Sort Key: ("substring"((customer.c_phone)::text, 1, 2))
+               Sort Method: quicksort  Memory: 4522kB
+               Buffers: shared hit=774804
+               ->  Nested Loop Anti Join  (cost=0.43..104976.09 rows=7512 width=38) (actual time=217.336..944.505 rows=63686 loops=1)
+                     Output: "substring"((customer.c_phone)::text, 1, 2), customer.c_acctbal
+                     Buffers: shared hit=774804
+                     ->  Seq Scan on public.customer  (cost=0.00..76440.05 rows=17500 width=26) (actual time=217.322..603.316 rows=190962 loops=1)
+                           Output: customer.c_custkey, customer.c_name, customer.c_address, customer.c_nationkey, customer.c_phone, customer.c_acctbal, customer.c_mktsegment, customer.c_comment
+                           Filter: ((customer.c_acctbal > $1) AND ("substring"((customer.c_phone)::text, 1, 2) = ANY ('{29,21,11,17,20,26,31}'::text[])))
+                           Rows Removed by Filter: 1309038
+                           Buffers: shared hit=74136
+                     ->  Index Only Scan using idx_orders_custkey on public.orders  (cost=0.43..14.27 rows=18 width=8) (actual time=0.002..0.002 rows=1 loops=190962)
+                           Output: orders.o_custkey
+                           Index Cond: (orders.o_custkey = customer.c_custkey)
+                           Heap Fetches: 127276
+                           Buffers: shared hit=700668
+ Planning time: 0.228 ms
+ Execution time: 962.518 ms
+(52 rows)
+
+Time: 967.609 ms
+ cntrycode | numcust | totacctbal  
+-----------+---------+-------------
+ 11        |    9010 | 67914529.95
+(1 row)
+
+Time: 928.194 ms
