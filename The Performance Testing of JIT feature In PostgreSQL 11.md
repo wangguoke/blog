@@ -404,6 +404,8 @@ JIT disabled In PG11:
  Execution Time: 54071.434 ms
 (144 rows)
 ```
+If you want to know more details, please refer to https://github.com/wangguoke/blog/tree/master/results%20about%20tpch .
+
 We could get the results like this(unit is second, JIT disabled in PG11 and PG10):
 ![1110noJIT](/assets/1110noJIT.png)
 
