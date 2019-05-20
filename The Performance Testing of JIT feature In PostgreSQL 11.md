@@ -1,13 +1,13 @@
 ## The Performance Testing of JIT feature In PostgreSQL 11
 
-In today's enterprise the data has been growing at a unprecendent rate, with the sharp rise in data the requirement for performing business intelligence and analytical queries is also increasing. Most enterprise are also relying to store there very large historical data in nosql or distributed storage like Hadoop for performing complex analytical queries. Having said that the OLAP capabitlities of the database are also getting there run for the money, the OLAP workloads are increasing and hence the need to enhance database OLAP functionality to handle the growing OLAP workloads. OLAP functionality is primarily affected by data throughput and CPU computing power.  Now with the rise of SSD, Column Storage and Distributed Databases, I/O is not the main bottleneck of the database. Modern databases add a lot of logical and virtual function calls in response to various scenarios.  A lot of redundant operations have been added to the original operation to ensure that enough scenes are handled. This reduces the efficiency of OLAP capabilities for database. In the PostgreSQL 11, they added the Just-in-Time compilation which could reduce the redundant logical operations and virtual function calls.
+In today's enterprise, the data has been growing at an unprecedented rate, with the sharp rise in data the requirement for performing business intelligence and analytical queries is also increasing. Most enterprises are also relying upon to store there very large historical data in NoSQL or distributed storage like Hadoop for performing complex analytical queries. Having said that the OLAP capabilities of the database are also getting there run for the money, the OLAP workloads are increasing and hence the need to enhance database OLAP functionality to handle the growing OLAP workloads. OLAP functionality is primarily affected by data throughput and CPU computing power. Now with the rise of SSD, Column Storage, and Distributed Databases, I/O is not the main bottleneck of the database. Modern databases add a lot of logical and virtual function calls in response to various scenarios. A lot of redundant operations have been added to the original operation to ensure that enough scenes are handled. This reduces the efficiency of OLAP capabilities for the database. In the PostgreSQL 11, they added the Just-in-Time compilation which could reduce the redundant logical operations and virtual function calls.
 
-JIT is a considered as a major feature in PG 11 and is expected to give siginifact rise in performance for specific workloads. It is important to note that JIT doesn't benefit every workload, it is known to give significant performance to specific workloads specially the OLAP worklaods.
+JIT is considered as a major feature in PG 11 and is expected to give a significant rise in performance for specific workloads. It is important to note that JIT doesn't benefit every workload, it is known to give a significant performance to specific workloads especially the OLAP workloads.
 
-It is therefore i ventured to perform testing and benchmarking of JIT with PG 11, my testing focusses on the following areas :
+It is, therefore, I ventured to perform testing and benchmarking of JIT with PG 11, my testing focusses on the following areas :
 
 1. Perform testing of JIT feature and identify the performance difference with JIT one and off with PG 11.
-2. Another purpose is to compare the peformance of PG 11 with/without JIT enabled and compare it with previous 10.* version.
+2. Another purpose is to compare the performance of PG 11 with/without JIT enabled and compare it with the previous 10.* version.
 
 ### What is Just-in-Time compilation?
 >Just-in-Time compilation (JIT) is the process of turning some form of interpreted program evaluation into a native program, and doing so at runtime.
@@ -29,7 +29,7 @@ In an LLVM-based compiler, a front end is responsible for parsing, validating an
 #### The time about LLVM
 ![Image [3]](/assets/Image%20[3].png)
 As mentioned earlier, LLVM IR can be efficiently (de)serialized to/from a binary format known as LLVM bitcode. Since LLVM IR is self-contained, and serialization
-is a lossless process, we can do part of compilation, save our progress to disk, then continue work at some point in the future. This feature provides a number of
+is a lossless process, we can do part of a compilation, save our progress to disk, then continue work at some point in the future. This feature provides a number of
 interesting capabilities including support for link-time and install-time optimization, both of which delay code generation from "compile time".
 
 #### The Pass about LLVM
@@ -40,7 +40,7 @@ You can write a special pass for your program.
 
 ### How to open the JIT in PostgreSQL 11?
 #### Build with --with-llvm
-PostgreSQL has builtin support to perform JIT compilation using LLVM when PostgreSQL is built with --with-llvm.
+PostgreSQL has built-in support to perform JIT compilation using LLVM when PostgreSQL is built with --with-llvm.
 ```
 ./configure --prefix=/home/postgres/pg11JIT --with-openssl --with-libxml --with-libxslt --with-llvm
 make -j6; make install
@@ -64,7 +64,7 @@ We could use 'select 3<4;' as an example:
 ![3compare4](/assets/3compare4_9a1pmtntz.png)
 
 #### How to verify this process?
-There is a jit_dump_bitcode
+There is a jit_dump_bitcode:
 >Writes the generated LLVM IR out to the file system, inside data_directory. This is only useful for working on the internals of the JIT implementation. The default setting is off. This parameter can only be changed by a superuser.
 
 You will get the bitcode about your query plan:
@@ -112,9 +112,9 @@ It's too lang.
 You could see it in the following picture:
 We could use 'select column from table where condition group by column order by  column;' as an example:
 ![improve cpu cache](/assets/improve%20cpu%20cache_rfwpyjg8u.png)
-Without the JIT, data is obtained one by one(like the left).
+Without the JIT, data are obtained one by one(like the left).
 With the JIT, we could get a lot of data to process together(like the right).
-This may be to improve the peformance with enhance the optimization options or changing the order of optimization.
+This may be to improve the performance with enhancing the optimization options or changing the order of optimization.
 
 ### Do the performance testing
 #### Hardware Configuration：
@@ -311,7 +311,7 @@ The actual benchmark is implemented in the 'tpch.sh' script. It expects an alrea
 and wait until the benchmark.
 
 
-*note: If there is a problem, please check the files in the results/error directory. I have a problem, there is not a time command in my OS, so I installation it.*
+*note: If there is a problem, please check the files in the results/error directory. I have an error, there is not a time command in my OS, so I installation it.*
 ```
 yum install time -y
 ```
@@ -341,11 +341,10 @@ as default
 ```
 We could get the results like this(unit is second, JIT disabled in PG11 and JIT enabled in PG11):
 ![PG112](/assets/PG112_atz0727xa.png)
-The query_1, query_2 ... and the query_22 is the 22 SQL for the testing of TPCH.
 The total is the sum of all 22 SQL execution times.
 To be more intuitive, we can look at the histogram:
 ![pg11h](/assets/pg11h.png)
-We will find that the execution time is greatly reduced with turning on the JIT. This is about 6.1% down.
+We will find that the execution time is reduced by turning on the JIT, about 6.1% down.
 With the JIT turned on, performance has dropped.
 I had checked the explain. I found that the JIT disabled used less time than JIT enabled in the Nested Loop.
 JIT enabled in PG11:
@@ -421,8 +420,8 @@ To be more intuitive, we can look at the histogram:
 We could get that the performance of the PG11 is 37.1% higher than the PG10.
 
 ### overall summary of JIT performance:
-This JIT depends on the situation. In the 22 SQL cases, performance has improved and some have declined.
-I think there is 2 issues in the JIT.
+This JIT depends on the situation. In the 22 SQL cases, performance has improved, and some have declined.
+I think there are two issues in the JIT.
 1. The default values about the parameters for JIT are not right.
 2. The query optimizer has some unreasonable design.
 
