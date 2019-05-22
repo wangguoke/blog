@@ -242,7 +242,7 @@ JIT disabled in PG11:
  Execution Time: 10785.906 ms
 (152 rows)
 ```
-If I turned the enable_nestloop off, time would be significantly reduced. I think the query optimizer has some unreasonable design. The query optimizer chose nestloop instead of others.
+If I turned the enable_nestloop off, time would be significantly reduced. But the query optimizer chose nested loop instead of others. I don't know if this is a problem.
 
 If you want to know more details about explains, please refer to https://github.com/wangguoke/blog/tree/master/results%20about%20tpch.
 
@@ -262,9 +262,9 @@ We could get that the performance of the PG11 is 37.1% higher than the PG10.
 
 #### overall summary of JIT performance:
 This JIT depends on the situation. In the 22 SQL cases, performance has improved, and some have declined.
-I think there are some issues in the query optimizer. In a meeting, someone talked to me about Oracle. They told me about the Adaptive Execution Plans technology of Oracle. Although Oracle is now losing on the cloud, his database technology is still very advanced. Its query optimizer can convert the nestloop to hash join or others. The underlying optimization technology of llvm is superior to humans. We can improve our query optimizer based on the information provided by LLVM. But this is a large project.
+Although I don't know if there is a problem with the query optimizer, it would be better if the optimizer could choose a better path. In a meeting, someone talked to me about Oracle. They told me about the Adaptive Execution Plans and the Hint technology of Oracle. Although Oracle is now losing on the cloud, its database technology is still very advanced. Its query optimizer can convert the nestloop to hash join or others if it needs. The underlying optimization technology of llvm is superior to humans. If there is a problem with the query optimizer, We can improve our query optimizer based on the information provided by LLVM. But this is a large project.
 
-#### I have 3 suggestions for Improvement:
+So I have 3 suggestions for Improvement:
 1. Add new parameters to find the right case for query optimizer.
 2. We can add some special passes for PostgreSQL.
 3. We can improve our query optimizer based on the information provided by LLVM.
