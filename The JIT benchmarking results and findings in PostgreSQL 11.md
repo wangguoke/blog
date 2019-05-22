@@ -114,7 +114,7 @@ ops=1)
 (13 rows)
 ```
 
-I used the tool pg_tpch to get the benchmarking results. For detailed usage, please refer to the URL: https://github.com/wangguoke/blog/blob/master/How%20to%20user%20the%20pg_tpch.md.
+I used the tool pg_tpch to get the benchmarking results. For detailed usage, please refer to the URL: https://github.com/wangguoke/blog/blob/master/How%20to%20use%20the%20pg_tpch.md.
 
 We could get the results like this(unit is second, JIT disabled in PG11 and JIT enabled in PG11):
 ![PG112](/assets/PG112_atz0727xa.png)
