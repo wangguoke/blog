@@ -193,59 +193,6 @@ total 0
 lrwxrwxrwx. 1 postgres postgres 40 Apr 26 23:07 dss-data -> /home/postgres/tpch/tpch/dbgen/dss/data/
 ```
 
-#### Get the pg_tpch
-This repository of pg_tpch contains a simple implementation that runs a TPC-H-like benchmark with a PostgreSQL database. It builds on the official TPC-H benchmark available at http://tpc.org/tpch/default.asp (uses just the dbgen a qgen parts).
-
-1. Get the repository:
-```
-[postgres@shawnc tpch]$ git clone https://github.com/tvondra/pg_tpch.git
-Cloning into 'pg_tpch'...
-remote: Enumerating objects: 47, done.
-remote: Total 47 (delta 0), reused 0 (delta 0), pack-reused 47
-Unpacking objects: 100% (47/47), done.
-```
-2. Adding some tools for pg_tpch:
-```
-[postgres@shawnc tpch]$ cd pg_tpch/
-[postgres@shawnc pg_tpch]$ cp ../tpch/dbgen/dbgen ./
-[postgres@shawnc pg_tpch]$ cp ../tpch/dbgen/qgen ./
-[postgres@shawnc pg_tpch]$ cp ../tpch/dbgen/dists.dss ./
-[postgres@shawnc pg_tpch]$ 
-```
-3. Generating directory dss/queries:
-```
-[postgres@shawnc pg_tpch]$ mkdir dss/queries
-```
-4. modified queries in the 'dss/templates' directory :
-```
-for q in `seq 1 22`
-do
-    DSS_QUERY=dss/templates ./qgen $q >> dss/queries/$q.sql
-    sed 's/^select/explain select/' dss/queries/$q.sql > dss/queries/$q.explain.sql
-    cat dss/queries/$q.sql >> dss/queries/$q.explain.sql;
-done
-```
-
-#### Running the benchmark
-
-The actual benchmark is implemented in the 'tpch.sh' script. It expects an already prepared database and four parameters - directory where to place the results, database and user name. So to run it, do this:
-```
-[postgres@shawnc pg_tpch]$
-[postgres@shawnc pg_tpch]$ ./tpch.sh ./results postgres postgres
-./tpch.sh: line 166: kill: (578) - No such process
-./tpch.sh: line 189: 32072 Terminated              vmstat $DELAY >> $RESULTS/vmstat.log
-```
-and wait until the benchmark.
-
-
-*note: If there is a problem, please check the files in the results/error directory. I have an error, there is not a time command in my OS, so I installation it.*
-```
-yum install time -y
-```
-#### Processing the results
-All the results are written into the output directory (first parameter). To get useful results (timing of each query, various statistics), you can use script process.php. It expects two parameters - input dir (with data collected by the tpch.sh script) and output file (in CSV format). For example like this:
-```
-php process.php ./results output.csv
 ```
 #### Test Plan
 As we all know, PG 10 and 11 have the function of parallel query.
