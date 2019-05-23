@@ -261,8 +261,12 @@ To be more intuitive, we can look at the histogram:
 We could get that the performance of the PG11 is 37.1% higher than the PG10.
 
 #### overall summary of JIT performance:
-This JIT depends on the situation. In the 22 SQL cases, performance has improved, and some have declined.
-Although I don't know if there is a problem with the query optimizer, it would be better if the optimizer could choose a better path. In a meeting, someone talked to me about Oracle. They told me about the Adaptive Execution Plans and the Hint technology of Oracle. Although Oracle is now losing on the cloud, its database technology is still very advanced. Its query optimizer can convert the nestloop to hash join or others if it needs. The underlying optimization technology of llvm is superior to humans. If there is a problem with the query optimizer, We can improve our query optimizer based on the information provided by LLVM. But this is a large project.
+I think it is fair to say that JIT is not for every workload but one can get good perforamnce with JIT for right workload. In the case of this testing effort with OLAP benchmark. we can that JIT is giving good performance in case of 22 queries and in some queries the performance has degraded with JIT.
+
+It is difficult so say whether the performance degradation in case of some queries is due to the query optimizer it would be better if the optimizer could choose a better path. I believe this is compareable with Oracle Adaptive Execution Plans and optimizer Hint feature. Although Oracle seems to be losing in the cloud but its database technology still seems very advanced. 
+
+It is worth trying out if query optimizer can convert the nestloop to hash join or others and see if that gives better performance. The underlying optimization technology of llvm is superior to humans. If there is a problem with the query optimizer, We can improve our query optimizer based on the information provided by LLVM .  this is a large project.
+It is difficult so say whether the performance degradation in case of some queries is due to the query optimizer it would be better if the optimizer could choose a better path. I believe this is compareable with Oracle Adaptive Execution Plans and optimizer Hint feature. Although Oracle seems to be losing in the cloud but its database technology still seems very advanced. Its query optimizer can convert the nestloop to hash join or others if it needs. The underlying optimization technology of llvm is superior to humans. If there is a problem with the query optimizer, We can improve our query optimizer based on the information provided by LLVM but it seems far fetched.
 
 So I have 3 suggestions for Improvement:
 1. Add new parameters to find the right case for query optimizer.
