@@ -122,12 +122,12 @@ Summary
 ![diff mode](/assets/diff%20mode_sgplwzari.png)
 
 Which is the database needs?
-| Object name | alignment | Parallel write | Parallel read | Encryption Mode |
-| --- | --- | --- | --- | --- |
-|Tables | yes | no | yes | CBC, CTR, CFB |
-| Indexes | yes | yes | yes | CTR |
-| WAL | no | no | no | CFB, OFB, CTR |
-| System catalogs | no | no | yes | CBC, CTR, CFB |
-| Temporary files | yes | no | no | CBC, CTR, CFB, OFB |
+| Object name     | alignment | Parallel write | Parallel read | Encryption Mode    |
+| --------------- | --------- | -------------- | ------------- | ------------------ |
+| Indexes         | yes       | yes            | yes           | CTR                |
+| WAL             | no        | no             | no            | CFB, OFB, CTR      |
+| System catalogs | no        | no             | yes           | CBC, CTR, CFB      |
+| Temporary files | yes       | no             | no            | CBC, CTR, CFB, OFB |
+| Tables | yes | no | yes | CBC, CTR, CFB |
 
 In the end, I think the CTR mode is the best mode for PostgreSQL.
