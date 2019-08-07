@@ -119,7 +119,7 @@ To ensure security, the key in this mode need to be changed for every  2^(n/2) e
 
 Summary
 
-
+![diff mode](/assets/diff%20mode_sgplwzari.png)
 
 Which is the database needs?
 | Object name | alignment | Parallel write | Parallel read | Encryption Mode |
