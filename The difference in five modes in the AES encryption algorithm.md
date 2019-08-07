@@ -118,7 +118,8 @@ In the database encryption, we can use CBC to encrypt all the files.
 To ensure security, the key in this mode need to be changed for every  2^(n/2) encryption blocks.
 
 Summary
-![diff mode](/assets/diff%20mode.png)
+
+
 
 Which is the database needs?
 | Object name | alignment | Parallel write | Parallel read | Encryption Mode |
